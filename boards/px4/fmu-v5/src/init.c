@@ -95,6 +95,30 @@ extern void led_on(int led);
 extern void led_off(int led);
 __END_DECLS
 
+//+++v1123-0
+#define WATCHDOG_TIMER_SET
+#ifdef WATCHDOG_TIMER_SET
+/************************************************************************************
+ * Name: watchdog_timer_proc
+ *
+ * Description:Watchdog process
+ *
+ ************************************************************************************/
+static bool _sw = false;
+void watchdog_timer_proc(void)
+{
+	if (_sw == true)
+	{
+		_sw = false;
+	}
+	else
+	{
+		_sw = true;
+	}
+	stm32_gpiowrite(0x7b, _sw);
+}
+#endif
+//+++v1123-0
 
 /************************************************************************************
  * Name: board_peripheral_reset
@@ -230,6 +254,21 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 	} else {
 		syslog(LOG_ERR, "[boot] Failed to read HW revision and version\n");
 	}
+
+//+++v1123-0
+#ifdef WATCHDOG_TIMER_SET
+	struct timespec ts0;
+	ts0.tv_sec = 0;
+	ts0.tv_nsec = 50000000;	//50ms
+
+	static struct hrt_call timercall;
+	hrt_call_every(&timercall,
+		       ts_to_abstime(&ts0),
+		       ts_to_abstime(&ts0),
+		       (hrt_callout)watchdog_timer_proc,
+		       NULL);
+#endif
+//+++v1123-0
 
 	/* configure SPI interfaces (after we determined the HW version) */
 

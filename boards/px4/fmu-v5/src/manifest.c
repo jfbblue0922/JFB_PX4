@@ -155,6 +155,34 @@ static const px4_hw_mft_item_t hw_mft_list_v0600[] = {
 	},
 };
 
+//+++v1123-0
+static const px4_hw_mft_item_t hw_mft_list_v0505[] = {
+	{
+		//  PX4_MFT_PX4IO
+		.present     = 0,
+		.mandatory   = 0,
+		.connection  = px4_hw_con_unknown,
+	},
+	{
+		// PX4_MFT_USB
+		.present     = 1,
+		.mandatory   = 1,
+		.connection  = px4_hw_con_onboard,
+	},
+	{
+		// PX4_MFT_CAN2
+		.present     = 1,
+		.mandatory   = 1,
+		.connection  = px4_hw_con_onboard,
+	},
+	{
+		// PX4_MFT_CAN3
+		.present     = 1,
+		.mandatory   = 1,
+		.connection  = px4_hw_con_onboard,
+	},
+};
+//+++v1123-0
 
 static px4_hw_mft_list_entry_t mft_lists[] = {
 	{0x0000, hw_mft_list_v0500,        arraySize(hw_mft_list_v0500)},
@@ -162,6 +190,9 @@ static px4_hw_mft_list_entry_t mft_lists[] = {
 	{0x0500, hw_mft_list_v0500,        arraySize(hw_mft_list_v0500)},  // Alias for CUAV V5+ R:0 V:5
 	{0x0400, hw_mft_list_v0540,        arraySize(hw_mft_list_v0540)},  // HolyBro mini no can 2,3
 	{0x0600, hw_mft_list_v0600,        arraySize(hw_mft_list_v0600)},  // CUAV V5nano R:0 V:6 with can 2
+//+++v1123-0
+	{0x0901, hw_mft_list_v0505,        arraySize(hw_mft_list_v0505)},
+//+++v1123-0
 };
 
 /************************************************************************************

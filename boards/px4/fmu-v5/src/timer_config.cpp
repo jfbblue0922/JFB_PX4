@@ -118,9 +118,11 @@ constexpr timer_io_channels_t led_pwm_channels[MAX_TIMER_LED_CHANNELS] = {
 	initIOTimerChannelUILED(led_pwm_timers, {Timer::Timer5, Timer::Channel1}, {GPIO::PortH, GPIO::Pin10}, 1),
 	initIOTimerChannelUILED(led_pwm_timers, {Timer::Timer5, Timer::Channel3}, {GPIO::PortH, GPIO::Pin12}, 3),
 #    else
-	initIOTimerChannelUILED(led_pwm_timers, {Timer::Timer5, Timer::Channel1}, {GPIO::PortH, GPIO::Pin10}, 1),
-	initIOTimerChannelUILED(led_pwm_timers, {Timer::Timer5, Timer::Channel2}, {GPIO::PortH, GPIO::Pin11}, 2),
-	initIOTimerChannelUILED(led_pwm_timers, {Timer::Timer5, Timer::Channel3}, {GPIO::PortH, GPIO::Pin12}, 3),
+//+++v1123-0
+//	initIOTimerChannelUILED(led_pwm_timers, {Timer::Timer5, Timer::Channel1}, {GPIO::PortH, GPIO::Pin10}, 1),
+//	initIOTimerChannelUILED(led_pwm_timers, {Timer::Timer5, Timer::Channel2}, {GPIO::PortH, GPIO::Pin11}, 2),
+//	initIOTimerChannelUILED(led_pwm_timers, {Timer::Timer5, Timer::Channel3}, {GPIO::PortH, GPIO::Pin12}, 3),
+//+++v1123-0
 #    endif
 #  endif
 #  if defined(BOARD_HAS_LED_PWM) && !defined(BOARD_HAS_CONTROL_STATUS_LEDS)

@@ -5,21 +5,31 @@
 
 board_adc start
 
+#+++v1123-0
 # Internal SPI bus ICM-20602
-icm20602 -s -R 2 -q start
+#icm20602 -s -R 2 -q start
 
 # Internal SPI bus ICM-20689
-icm20689 -s -R 2 start
+#icm20689 -s -R 2 start
 
 # Internal SPI bus BMI055 accel/gyro
-bmi055 -A -R 2 -s start
-bmi055 -G -R 2 -s start
+# scha63t -A -R 2 -s start
+# scha63t -G -R 2 -s start
+scha63t -A -R 0 -s start
+scha63t -G -R 0 -s start
+# scha63t initial wait
+sleep 4
+
+icm20602 -s -R 0 -q start
+#+++v1123-0
 
 # Baro on internal SPI
 ms5611 -s start
 
 # internal compass
-ist8310 -I -R 10 start
+#+++v1123-0
+ist8310 -I -R 6 start
+#+++v1123-0
 
 # External compass on GPS1/I2C1 (the 3rd external bus): standard Holybro Pixhawk 4 or CUAV V5 GPS/compass puck (with lights, safety button, and buzzer)
 ist8310 -X -b 1 -R 10 start

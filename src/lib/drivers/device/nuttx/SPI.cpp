@@ -54,6 +54,10 @@
 # error This driver requires CONFIG_SPI_EXCHANGE
 #endif
 
+//+++v1123-0
+static bool fReset = false;
+//+++v1123-0
+
 namespace device
 {
 
@@ -84,6 +88,13 @@ SPI::~SPI()
 int
 SPI::init()
 {
+//+++v1123-0
+	if (fReset == false)
+	{
+		stm32_gpiowrite(0x7c, true);
+		fReset = true;
+	}
+//+++v1123-0
 	/* attach to the spi bus */
 	if (_dev == nullptr) {
 		int bus = get_device_bus();

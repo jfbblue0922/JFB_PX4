@@ -626,8 +626,12 @@ bool ICM20602::ProcessAccel(const hrt_abstime &timestamp_sample, const FIFO::DAT
 		// sensor's frame is +x forward, +y left, +z up
 		//  flip y & z to publish right handed with z down (x forward, y right, z down)
 		accel.x[accel.samples] = accel_x;
-		accel.y[accel.samples] = (accel_y == INT16_MIN) ? INT16_MAX : -accel_y;
-		accel.z[accel.samples] = (accel_z == INT16_MIN) ? INT16_MAX : -accel_z;
+//+++v1123-0
+//		accel.y[accel.samples] = (accel_y == INT16_MIN) ? INT16_MAX : -accel_y;
+//		accel.z[accel.samples] = (accel_z == INT16_MIN) ? INT16_MAX : -accel_z;
+		accel.y[accel.samples] = accel_y;
+		accel.z[accel.samples] = accel_z;
+//+++v1123-0
 		accel.samples++;
 	}
 
@@ -656,8 +660,12 @@ void ICM20602::ProcessGyro(const hrt_abstime &timestamp_sample, const FIFO::DATA
 		// sensor's frame is +x forward, +y left, +z up
 		//  flip y & z to publish right handed with z down (x forward, y right, z down)
 		gyro.x[i] = gyro_x;
-		gyro.y[i] = (gyro_y == INT16_MIN) ? INT16_MAX : -gyro_y;
-		gyro.z[i] = (gyro_z == INT16_MIN) ? INT16_MAX : -gyro_z;
+//+++v1123-0
+//		gyro.y[i] = (gyro_y == INT16_MIN) ? INT16_MAX : -gyro_y;
+//		gyro.z[i] = (gyro_z == INT16_MIN) ? INT16_MAX : -gyro_z;
+		gyro.y[i] = gyro_y;
+		gyro.z[i] = gyro_z;
+//+++v1123-0
 	}
 
 	_px4_gyro.set_error_count(perf_event_count(_bad_register_perf) + perf_event_count(_bad_transfer_perf) +

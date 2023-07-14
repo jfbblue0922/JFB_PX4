@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (C) 2012 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2020 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,34 +31,70 @@
  *
  ****************************************************************************/
 
-#include <px4_arch/spi_hw_description.h>
-#include <drivers/drv_sensor.h>
-#include <nuttx/spi/spi.h>
+#pragma once
 
-constexpr px4_spi_bus_t px4_spi_buses[SPI_BUS_MAX_BUS_ITEMS] = {
-	initSPIBus(SPI::Bus::SPI1, {
-//+++v1123-0
-		initSPIDevice(DRV_GYR_DEVTYPE_SCHA63T, SPI::CS{GPIO::PortF, GPIO::Pin2}),
-		initSPIDevice(DRV_ACC_DEVTYPE_SCHA63T, SPI::CS{GPIO::PortF, GPIO::Pin4}),
-		initSPIDevice(DRV_IMU_DEVTYPE_ICM20602, SPI::CS{GPIO::PortF, GPIO::Pin3}, SPI::DRDY{GPIO::PortC, GPIO::Pin5}),
-//+++v1123-0
-	}, {GPIO::PortE, GPIO::Pin3}),
-	initSPIBus(SPI::Bus::SPI2, {
-		initSPIDevice(SPIDEV_FLASH(0), SPI::CS{GPIO::PortF, GPIO::Pin5})
-	}),
-	initSPIBus(SPI::Bus::SPI4, {
-		initSPIDevice(DRV_BARO_DEVTYPE_MS5611, SPI::CS{GPIO::PortF, GPIO::Pin10}),
-	}),
-	initSPIBusExternal(SPI::Bus::SPI5, {
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin4}, SPI::DRDY{GPIO::PortD, GPIO::Pin15}),
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin10}),
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin11})
-	}),
-	initSPIBusExternal(SPI::Bus::SPI6, {
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin6}),
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin7}),
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin8})
-	}),
+#include <drivers/drv_hrt.h>
+#include <lib/drivers/device/spi.h>
+#include <lib/perf/perf_counter.h>
+#include <px4_platform_common/i2c_spi_buses.h>
+
+static constexpr int16_t combine(uint8_t msb, uint8_t lsb) { return (msb << 8u) | lsb; }
+extern int16_t gyro_x;
+
+class SCHA63T : public device::SPI, public I2CSPIDriver<SCHA63T>
+{
+public:
+	SCHA63T(uint8_t devtype, const char *name, I2CSPIBusOption bus_option, int bus, uint32_t device, enum spi_mode_e mode,
+	       uint32_t frequency, spi_drdy_gpio_t drdy_gpio);
+
+	virtual ~SCHA63T() = default;
+
+	static I2CSPIDriverBase *instantiate(const BusCLIArguments &cli, const BusInstanceIterator &iterator,
+					     int runtime_instance);
+	static void print_usage();
+
+	virtual void RunImpl() = 0;
+
+	int init() override;
+	virtual void print_status() = 0;
+
+	unsigned char	CalcTblCrc( unsigned char	*ptr, short	nLen);
+
+protected:
+
+	bool Reset();
+
+	const spi_drdy_gpio_t _drdy_gpio;
+
+	hrt_abstime _reset_timestamp{0};
+	hrt_abstime _last_config_check_timestamp{0};
+	hrt_abstime _temperature_update_timestamp{0};
+	int _failure_count{0};
+
+	px4::atomic<uint32_t> _drdy_fifo_read_samples{0};
+	bool _data_ready_interrupt_enabled{false};
+
+	enum class STATE : uint8_t {
+		RESET,
+		WAIT_FOR_RESET,
+		CONFIGURE,
+		FIFO_READ,
+	};
+
+	STATE _state{STATE::RESET};
+
+	enum class INITS : uint8_t {
+		INITS_0,
+		INITS_1,
+		INITS_2,
+		INITS_3,
+		INITS_4,
+		INITS_5,
+		INITS_6,
+	};
+
+	INITS _inits{INITS::INITS_0};
+
+	uint16_t _fifo_empty_interval_us{2500}; // 2500 us / 400 Hz transfer interval
+
 };
-
-static constexpr bool unused = validateSPIConfig(px4_spi_buses);

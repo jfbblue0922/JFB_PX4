@@ -269,6 +269,11 @@
 #define GPIO_VDD_5V_WIFI_EN             /* PG6  */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN5)
 #define GPIO_VDD_3V3_SD_CARD_EN         /* PG7  */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN7)
 
+//+++v1123-0
+/* Spare GPIO */
+
+#define GPIO_PH11                       /* PH11  */  (GPIO_OUTPUT|GPIO_PORTH|GPIO_PIN11)
+//+++v1123-0
 
 /* Define True logic Power Control in arch agnostic form */
 
@@ -434,6 +439,9 @@
 
 #define BOARD_HAS_ON_RESET 1
 
+//+++v1123-0
+//GPIO_PH11 add
+//+++v1123-0
 #define PX4_GPIO_INIT_LIST { \
 		PX4_ADC_GPIO,                     \
 		GPIO_HW_REV_DRIVE,                \
@@ -463,7 +471,8 @@
 		GPIO_RSSI_IN_INIT,                \
 		GPIO_nSAFETY_SWITCH_LED_OUT_INIT, \
 		GPIO_SAFETY_SWITCH_IN,            \
-		GPIO_nARMED_INIT                  \
+		GPIO_nARMED_INIT,                 \
+		GPIO_PH11                         \
 	}
 
 #define BOARD_ENABLE_CONSOLE_BUFFER

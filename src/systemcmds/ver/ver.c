@@ -170,7 +170,10 @@ int ver_main(int argc, char *argv[])
 					printf("FW version: Release %u.%u.%u (%u)\n", major, minor, patch, fwver);
 
 				} else {
-					printf("FW version: %u.%u.%u %x (%u)\n", major, minor, patch, type, fwver);
+//+++v1123-0
+//					printf("FW version: %u.%u.%u %x (%u)\n", major, minor, patch, type, fwver);
+					printf("FW version: %u.%u.%u %x (%u) (JFB100 V1.0.0)\n", major, minor, patch, type, fwver);
+//+++v1123-0
 				}
 
 				if (show_all) {

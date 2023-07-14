@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (C) 2012 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2020, 2021 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,34 +31,69 @@
  *
  ****************************************************************************/
 
-#include <px4_arch/spi_hw_description.h>
-#include <drivers/drv_sensor.h>
-#include <nuttx/spi/spi.h>
+#include <px4_platform_common/getopt.h>
+#include <px4_platform_common/module.h>
 
-constexpr px4_spi_bus_t px4_spi_buses[SPI_BUS_MAX_BUS_ITEMS] = {
-	initSPIBus(SPI::Bus::SPI1, {
-//+++v1123-0
-		initSPIDevice(DRV_GYR_DEVTYPE_SCHA63T, SPI::CS{GPIO::PortF, GPIO::Pin2}),
-		initSPIDevice(DRV_ACC_DEVTYPE_SCHA63T, SPI::CS{GPIO::PortF, GPIO::Pin4}),
-		initSPIDevice(DRV_IMU_DEVTYPE_ICM20602, SPI::CS{GPIO::PortF, GPIO::Pin3}, SPI::DRDY{GPIO::PortC, GPIO::Pin5}),
-//+++v1123-0
-	}, {GPIO::PortE, GPIO::Pin3}),
-	initSPIBus(SPI::Bus::SPI2, {
-		initSPIDevice(SPIDEV_FLASH(0), SPI::CS{GPIO::PortF, GPIO::Pin5})
-	}),
-	initSPIBus(SPI::Bus::SPI4, {
-		initSPIDevice(DRV_BARO_DEVTYPE_MS5611, SPI::CS{GPIO::PortF, GPIO::Pin10}),
-	}),
-	initSPIBusExternal(SPI::Bus::SPI5, {
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin4}, SPI::DRDY{GPIO::PortD, GPIO::Pin15}),
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin10}),
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin11})
-	}),
-	initSPIBusExternal(SPI::Bus::SPI6, {
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin6}),
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin7}),
-		initSPIConfigExternal(SPI::CS{GPIO::PortI, GPIO::Pin8})
-	}),
-};
+#include "SCHA63T.hpp"
 
-static constexpr bool unused = validateSPIConfig(px4_spi_buses);
+void SCHA63T::print_usage()
+{
+	PRINT_MODULE_USAGE_NAME("bmi055", "driver");
+	PRINT_MODULE_USAGE_SUBCATEGORY("imu");
+	PRINT_MODULE_USAGE_COMMAND("start");
+	PRINT_MODULE_USAGE_PARAM_FLAG('A', "Accel", true);
+	PRINT_MODULE_USAGE_PARAM_FLAG('G', "Gyro", true);
+	PRINT_MODULE_USAGE_PARAMS_I2C_SPI_DRIVER(false, true);
+	PRINT_MODULE_USAGE_PARAM_INT('R', 0, 0, 35, "Rotation", true);
+	PRINT_MODULE_USAGE_DEFAULT_COMMANDS();
+}
+
+extern "C" int scha63t_main(int argc, char *argv[])
+{
+	int ch;
+	using ThisDriver = SCHA63T;
+	BusCLIArguments cli{false, true};
+	cli.type = 0;
+	cli.default_spi_frequency = 10000000;
+	cli.spi_mode = SPIDEV_MODE0;  /* default = MODE3 */
+
+	while ((ch = cli.getOpt(argc, argv, "AGR:")) != EOF) {
+		switch (ch) {
+		case 'A':
+			cli.type = DRV_ACC_DEVTYPE_SCHA63T;
+			break;
+
+		case 'G':
+			cli.type = DRV_GYR_DEVTYPE_SCHA63T;
+			break;
+
+		case 'R':
+			cli.rotation = (enum Rotation)atoi(cli.optArg());
+			break;
+		}
+	}
+
+	const char *verb = cli.optArg();
+
+	if (!verb) {
+		ThisDriver::print_usage();
+		return -1;
+	}
+
+	BusInstanceIterator iterator(MODULE_NAME, cli, cli.type);
+
+	if (!strcmp(verb, "start")) {
+		return ThisDriver::module_start(cli, iterator);
+	}
+
+	if (!strcmp(verb, "stop")) {
+		return ThisDriver::module_stop(iterator);
+	}
+
+	if (!strcmp(verb, "status")) {
+		return ThisDriver::module_status(iterator);
+	}
+
+	ThisDriver::print_usage();
+	return -1;
+}
