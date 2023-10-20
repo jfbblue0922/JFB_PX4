@@ -15,7 +15,9 @@
 .~lock.*
 Testing/
 Packages/*
-build/*
+###build/*
+build/jfb_jfb110_default/*
+!/build/jfb_jfb110_default/jfb_jfb110_default.px4
 build_*/
 cscope.out
 cscope.in.out
