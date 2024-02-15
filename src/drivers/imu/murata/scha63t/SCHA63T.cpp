@@ -345,7 +345,7 @@ int AP_SCHA63T::start()
 	int ret = init();
 	if (ret != OK) return ret;
 
-    float rate = 1e6f / (float)dev_due->get_rate_hz();
+    float rate = 2000.f;
 	dev_uno->ScheduleOnInterval(rate);
 	dev_due->ScheduleOnInterval(rate);
 

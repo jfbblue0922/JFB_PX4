@@ -42,7 +42,6 @@ constexpr io_timers_t io_timers[MAX_IO_TIMERS] = {
 	initIOTimer(Timer::Timer15),
 };
 
-#if DIRECT_PWM_OUTPUT_CHANNELS == 16
 constexpr timer_io_channels_t timer_io_channels[MAX_TIMER_IO_CHANNELS] = {
 	initIOTimerChannel(io_timers, {Timer::Timer15, Timer::Channel1}, {GPIO::PortA, GPIO::Pin2}),   // pwm(1)
 	initIOTimerChannel(io_timers, {Timer::Timer15, Timer::Channel2}, {GPIO::PortE, GPIO::Pin6}),   // pwm(2)
@@ -61,18 +60,6 @@ constexpr timer_io_channels_t timer_io_channels[MAX_TIMER_IO_CHANNELS] = {
 	initIOTimerChannel(io_timers, {Timer::Timer5,  Timer::Channel3}, {GPIO::PortH, GPIO::Pin12}),  // pwm(15)
 	initIOTimerChannel(io_timers, {Timer::Timer12, Timer::Channel1}, {GPIO::PortH, GPIO::Pin6}),   // pwm(16)
 };
-#elif DIRECT_PWM_OUTPUT_CHANNELS == 8
-constexpr timer_io_channels_t timer_io_channels[MAX_TIMER_IO_CHANNELS] = {
-	initIOTimerChannel(io_timers, {Timer::Timer15, Timer::Channel1}, {GPIO::PortA, GPIO::Pin2}),   // pwm(1)
-	initIOTimerChannel(io_timers, {Timer::Timer15, Timer::Channel2}, {GPIO::PortE, GPIO::Pin6}),   // pwm(2)
-	initIOTimerChannel(io_timers, {Timer::Timer3,  Timer::Channel2}, {GPIO::PortA, GPIO::Pin7}),   // pwm(3)
-	initIOTimerChannel(io_timers, {Timer::Timer3,  Timer::Channel1}, {GPIO::PortA, GPIO::Pin6}),   // pwm(4)
-	initIOTimerChannel(io_timers, {Timer::Timer4,  Timer::Channel4}, {GPIO::PortD, GPIO::Pin15}),  // pwm(5)
-	initIOTimerChannel(io_timers, {Timer::Timer1,  Timer::Channel1}, {GPIO::PortE, GPIO::Pin9}),   // pwm(6)
-	initIOTimerChannel(io_timers, {Timer::Timer5,  Timer::Channel2}, {GPIO::PortH, GPIO::Pin11}),  // pwm(7)
-	initIOTimerChannel(io_timers, {Timer::Timer5,  Timer::Channel1}, {GPIO::PortH, GPIO::Pin10}),  // pwm(8)
-};
-#endif
 
 constexpr io_timers_channel_mapping_t io_timers_channel_mapping =
-	initIOTimerChannelMapping(io_timers, timer_io_channels);
+	initIOTimerChannelMappingNonContinuous(io_timers, timer_io_channels);

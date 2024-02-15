@@ -60,6 +60,7 @@ else()
 		spi.cpp
 		timer_config.cpp
 		usb.c
+		can.c
 	)
 	add_dependencies(drivers_board arch_board_hw_info)
 

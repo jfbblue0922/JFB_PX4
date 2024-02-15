@@ -45,18 +45,18 @@
 #include <stm32_gpio.h>
 
 /* PX4IO connection configuration */
-#define BOARD_USES_PX4IO_VERSION       2
-#define PX4IO_SERIAL_DEVICE            "/dev/ttyS3"
-#define PX4IO_SERIAL_TX_GPIO           GPIO_USART6_TX
-#define PX4IO_SERIAL_RX_GPIO           GPIO_USART6_RX
-#define PX4IO_SERIAL_BASE              STM32_USART6_BASE
-#define PX4IO_SERIAL_VECTOR            STM32_IRQ_USART6
-#define PX4IO_SERIAL_TX_DMAMAP         DMAMAP_USART6_TX
-#define PX4IO_SERIAL_RX_DMAMAP         DMAMAP_USART6_RX
-#define PX4IO_SERIAL_RCC_REG           STM32_RCC_APB2ENR
-#define PX4IO_SERIAL_RCC_EN            RCC_APB2ENR_USART6EN
-#define PX4IO_SERIAL_CLOCK             STM32_PCLK2_FREQUENCY
-#define PX4IO_SERIAL_BITRATE           1500000               /* 1.5Mbps -> max rate for IO */
+//#define BOARD_USES_PX4IO_VERSION       2
+//#define PX4IO_SERIAL_DEVICE            "/dev/ttyS3"
+//#define PX4IO_SERIAL_TX_GPIO           GPIO_USART6_TX
+//#define PX4IO_SERIAL_RX_GPIO           GPIO_USART6_RX
+//#define PX4IO_SERIAL_BASE              STM32_USART6_BASE
+//#define PX4IO_SERIAL_VECTOR            STM32_IRQ_USART6
+//#define PX4IO_SERIAL_TX_DMAMAP         DMAMAP_USART6_TX
+//#define PX4IO_SERIAL_RX_DMAMAP         DMAMAP_USART6_RX
+//#define PX4IO_SERIAL_RCC_REG           STM32_RCC_APB2ENR
+//#define PX4IO_SERIAL_RCC_EN            RCC_APB2ENR_USART6EN
+//#define PX4IO_SERIAL_CLOCK             STM32_PCLK2_FREQUENCY
+//#define PX4IO_SERIAL_BITRATE           1500000               /* 1.5Mbps -> max rate for IO */
 
 /* LEDs */
 #define GPIO_nLED_RED        /* PE3 */  (GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTE|GPIO_PIN3)
@@ -135,9 +135,11 @@
 /* HW has to large of R termination on ADC todo:change when HW value is chosen */
 #define BOARD_ADC_OPEN_CIRCUIT_V     (5.6f)
 
+/* UAVCAN */
+#define UAVCAN_NUM_IFACES_RUNTIME  1
+
 /* PWM */
-//#define DIRECT_PWM_OUTPUT_CHANNELS  16
-#define DIRECT_PWM_OUTPUT_CHANNELS  8
+#define DIRECT_PWM_OUTPUT_CHANNELS  16
 #define BOARD_NUM_IO_TIMERS 6
 
 /* Power supply control and monitoring GPIOs */
@@ -170,7 +172,9 @@
 #define GPIO_GPIO_nARMED                /* PB10 */ (GPIO_OUTPUT|GPIO_PORTB|GPIO_PIN10)
 
 #define GPIO_LED_SAFETY                 /* PD10 */ (GPIO_OUTPUT|GPIO_PORTD|GPIO_PIN10)
-#define GPIO_SAFETY_IN                  /* PE5  */ (GPIO_INPUT|GPIO_PULLDOWN|GPIO_PORTE|GPIO_PIN5)
+#define GPIO_SAFETY_SWITCH_IN           /* PF5  */ (GPIO_INPUT|GPIO_PULLDOWN|GPIO_PORTF|GPIO_PIN5)
+/* Enable the FMU to use the switch it if there is no px4io fixme:This should be BOARD_SAFTY_BUTTON() */
+#define GPIO_BTN_SAFETY GPIO_SAFETY_SWITCH_IN /* Enable the FMU to control it if there is no px4io */
 
 /* Tone alarm output */
 #define TONE_ALARM_TIMER        14  /* timer 14 */
@@ -179,10 +183,10 @@
 #define GPIO_TONE_ALARM_IDLE    GPIO_BUZZER_1
 #define GPIO_TONE_ALARM         GPIO_TIM2_CH1OUT_2
 
-/* TODO PWM input driver. Use FMU AUX5 pins attached to timer4 channel 2 */
-#define PWMIN_TIMER                       4
-#define PWMIN_TIMER_CHANNEL    /* T4C2 */ 2
-#define GPIO_PWM_IN            /* PC6  */ GPIO_TIM8_CH2IN_1
+/* PWM input driver. Use FMU AUX5 pins attached to timer8 channel 2 */
+//#define PWMIN_TIMER                       8
+//#define PWMIN_TIMER_CHANNEL    /* T4C2 */ 2
+//#define GPIO_PWM_IN            /* PC6  */ GPIO_TIM8_CH2IN_1
 
 /* Define True logic Power Control in arch agnostic form */
 #define VDD_5V_PERIPH_EN(on_true)          px4_arch_gpiowrite(GPIO_nVDD_5V_PERIPH_EN, !(on_true))
@@ -282,7 +286,7 @@
 		GPIO_FMU_CAP2,                    \
 		GPIO_GPIO_nARMED,                 \
 		GPIO_LED_SAFETY,                  \
-		GPIO_SAFETY_IN,                    \
+		GPIO_SAFETY_SWITCH_IN,            \
 	}
 
 __BEGIN_DECLS

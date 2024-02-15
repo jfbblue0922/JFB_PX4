@@ -224,8 +224,8 @@
 
 #define GPIO_UART5_TX    GPIO_UART5_TX_3       /* PC12 */
 #define GPIO_UART5_RX    GPIO_UART5_RX_3       /* PD2  */
-#define GPIO_UART5_CTS   GPIO_UART5_CTS        /* PC9  */
-#define GPIO_UART5_RTS   GPIO_UART5_RTS        /* PC8  */
+//      GPIO_UART5_CTS   No Remap              /* PC9 */
+//      GPIO_UART5_RTS   No Remap              /* PC8 */
 
 #define GPIO_USART6_TX   GPIO_USART6_TX_2      /* PG14 (TP10) */
 #define GPIO_USART6_RX   GPIO_USART6_RX_1      /* PC7  */
@@ -280,7 +280,7 @@
 /* SDMMC2 */
 #define GPIO_SDMMC2_CK   GPIO_SDMMC2_CK_1      /* PD6  */
 #define GPIO_SDMMC2_CMD  GPIO_SDMMC2_CMD_1     /* PD7  */
-//GPIO_SDMMC2_D0   /* PB14 */
-//GPIO_SDMMC2_D1   /* PB15 */
+//      GPIO_SDMMC2_D0   No Remap              /* PB14 */
+//      GPIO_SDMMC2_D1   No Remap              /* PB15 */
 #define GPIO_SDMMC2_D2   GPIO_SDMMC2_D2_1      /* PG11 */
-//GPIO_SDMMC2_D3   /* PB4  */
+//      GPIO_SDMMC2_D3   No Remap              /* PB4  */

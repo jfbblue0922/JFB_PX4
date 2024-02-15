@@ -52,9 +52,13 @@ constexpr px4_spi_bus_t px4_spi_buses[SPI_BUS_MAX_BUS_ITEMS] = {
 	}, {GPIO::PortG, GPIO::Pin12}),
 
 	initSPIBus(SPI::Bus::SPI4, {
-//                initSPIDevice(DRV_IMU_DEVTYPE_IIM42652, SPI::CS{GPIO::PortG, GPIO::Pin15}, SPI::DRDY{GPIO::PortA, GPIO::Pin15}),
+        	initSPIDevice(DRV_IMU_DEVTYPE_IIM42652, SPI::CS{GPIO::PortG, GPIO::Pin15}, SPI::DRDY{GPIO::PortA, GPIO::Pin15}),
 
 		initSPIDevice(DRV_BARO_DEVTYPE_MS5611, SPI::CS{GPIO::PortH, GPIO::Pin15}),
+	}, {GPIO::PortG, GPIO::Pin12}),
+
+	initSPIBus(SPI::Bus::SPI5, {
+
 	}, {GPIO::PortG, GPIO::Pin12})
 };
 
