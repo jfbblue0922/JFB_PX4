@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (C) 2020 PX4 Development Team. All rights reserved.
+ *   Copyright (C) 2016 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,17 +32,61 @@
  ****************************************************************************/
 
 /**
- * @file usb.c
+ * @file px4fmu_usb.c
  *
  * Board-specific USB functions.
  */
 
-#include "board_config.h"
+/************************************************************************************
+ * Included Files
+ ************************************************************************************/
+
+#include <px4_platform_common/px4_config.h>
+
+#include <sys/types.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <debug.h>
+
 #include <nuttx/usb/usbdev.h>
 #include <nuttx/usb/usbdev_trace.h>
+
+#include <arm_internal.h>
+#include <chip.h>
+#include <stm32_gpio.h>
 #include <stm32_otg.h>
-#include <debug.h>
-#include <syslog.h>
+#include "board_config.h"
+
+/************************************************************************************
+ * Definitions
+ ************************************************************************************/
+
+/************************************************************************************
+ * Private Functions
+ ************************************************************************************/
+
+/************************************************************************************
+ * Public Functions
+ ************************************************************************************/
+
+/************************************************************************************
+ * Name: stm32_usbinitialize
+ *
+ * Description:
+ *   Called to setup USB-related GPIO pins for the PX4FMU board.
+ *
+ ************************************************************************************/
+
+__EXPORT void stm32_usbinitialize(void)
+{
+	/* The OTG FS has an internal soft pull-up */
+
+	/* Configure the OTG FS VBUS sensing GPIO, Power On, and Overcurrent GPIOs */
+
+#ifdef CONFIG_STM32H7_OTGFS
+	stm32_configgpio(GPIO_OTGFS_VBUS);
+#endif
+}
 
 /************************************************************************************
  * Name:  stm32_usbsuspend
@@ -54,6 +98,7 @@
  *   while the USB is suspended.
  *
  ************************************************************************************/
+
 __EXPORT void stm32_usbsuspend(FAR struct usbdev_s *dev, bool resume)
 {
 	uinfo("resume: %d\n", resume);

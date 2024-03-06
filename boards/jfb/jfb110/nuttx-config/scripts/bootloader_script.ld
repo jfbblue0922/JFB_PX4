@@ -109,18 +109,16 @@
 
 MEMORY
 {
-	FLASH     (rx) : ORIGIN = 0x08000000, LENGTH = 2048K
-	DTCM1    (rwx) : ORIGIN = 0x20000000, LENGTH =   64K
-	DTCM2    (rwx) : ORIGIN = 0x20010000, LENGTH =   64K
-
-	ITCM_RAM (rwx) : ORIGIN = 0x00000000, LENGTH =   64K
-	DTCM_RAM (rwx) : ORIGIN = 0x20000000, LENGTH =  128K
-	AXI_SRAM (rwx) : ORIGIN = 0x24000000, LENGTH =  512K /* D1 domain AXI bus */
-	SRAM1    (rwx) : ORIGIN = 0x30000000, LENGTH =  128K /* D2 domain AHB bus */
-	SRAM2    (rwx) : ORIGIN = 0x30020000, LENGTH =  128K /* D2 domain AHB bus */
-	SRAM3    (rwx) : ORIGIN = 0x30040000, LENGTH =   32K /* D2 domain AHB bus */
-	SRAM4    (rwx) : ORIGIN = 0x38000000, LENGTH =   64K /* D3 domain */
-	BKPRAM   (rwx) : ORIGIN = 0x38800000, LENGTH =    4K
+	itcm  (rwx) : ORIGIN = 0x00000000, LENGTH =   64K
+	flash (rx)  : ORIGIN = 0x08000000, LENGTH =  128K
+	dtcm1 (rwx) : ORIGIN = 0x20000000, LENGTH =   64K
+	dtcm2 (rwx) : ORIGIN = 0x20010000, LENGTH =   64K
+	sram  (rwx) : ORIGIN = 0x24000000, LENGTH =  512K
+	sram1 (rwx) : ORIGIN = 0x30000000, LENGTH =  128K
+	sram2 (rwx) : ORIGIN = 0x30020000, LENGTH =  128K
+	sram3 (rwx) : ORIGIN = 0x30040000, LENGTH =   32K
+	sram4 (rwx) : ORIGIN = 0x38000000, LENGTH =   64K
+	bbram (rwx) : ORIGIN = 0x38800000, LENGTH =    4K
 }
 
 OUTPUT_ARCH(arm)
@@ -158,7 +156,7 @@ SECTIONS
 		*(.gnu.linkonce.r.*)
 		_etext = ABSOLUTE(.);
 
-	} > FLASH
+	} > flash
 
 	/*
 	 * Init functions (static constructors and the like)
@@ -167,16 +165,17 @@ SECTIONS
 		_sinit = ABSOLUTE(.);
 		KEEP(*(.init_array .init_array.*))
 		_einit = ABSOLUTE(.);
-	} > FLASH
+	} > flash
+
 
 	.ARM.extab : {
 		*(.ARM.extab*)
-	} > FLASH
+	} > flash
 
 	__exidx_start = ABSOLUTE(.);
 	.ARM.exidx : {
 		*(.ARM.exidx*)
-	} > FLASH
+	} > flash
 	__exidx_end = ABSOLUTE(.);
 
 	_eronly = ABSOLUTE(.);
@@ -187,7 +186,7 @@ SECTIONS
 		*(.gnu.linkonce.d.*)
 		CONSTRUCTORS
 		_edata = ABSOLUTE(.);
-	} > AXI_SRAM AT > FLASH
+	} > sram AT > flash
 
 	.bss : {
 		_sbss = ABSOLUTE(.);
@@ -196,7 +195,7 @@ SECTIONS
 		*(COMMON)
 		. = ALIGN(4);
 		_ebss = ABSOLUTE(.);
-	} > AXI_SRAM
+	} > sram
 
 	/* Stabs debugging sections. */
 	.stab 0 : { *(.stab) }
@@ -211,13 +210,4 @@ SECTIONS
 	.debug_line 0 : { *(.debug_line) }
 	.debug_pubnames 0 : { *(.debug_pubnames) }
 	.debug_aranges 0 : { *(.debug_aranges) }
-
-	.ramfunc : {
-		_sramfuncs = .;
-		*(.ramfunc  .ramfunc.*)
-		. = ALIGN(4);
-		_eramfuncs = .;
-	} > ITCM_RAM AT > FLASH
-
-	_framfuncs = LOADADDR(.ramfunc);
 }

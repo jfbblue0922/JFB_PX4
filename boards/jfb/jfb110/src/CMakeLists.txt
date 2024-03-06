@@ -30,13 +30,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 ############################################################################
-
-add_library(board_bus_info
-	i2c.cpp
-	spi.cpp
-)
-add_dependencies(board_bus_info nuttx_context)
-
 if("${PX4_BOARD_LABEL}" STREQUAL  "bootloader")
 	add_library(drivers_board
 		bootloader_main.c
@@ -44,14 +37,15 @@ if("${PX4_BOARD_LABEL}" STREQUAL  "bootloader")
 	)
 	target_link_libraries(drivers_board
 		PRIVATE
-			nuttx_arch
-			nuttx_drivers
+			nuttx_arch # sdio
+			nuttx_drivers # sdio
 			bootloader
 	)
 	target_include_directories(drivers_board PRIVATE ${PX4_SOURCE_DIR}/platforms/nuttx/src/bootloader/common)
 
 else()
 	add_library(drivers_board
+		can.c
 		i2c.cpp
 		init.c
 		iwdg.c
@@ -60,7 +54,6 @@ else()
 		spi.cpp
 		timer_config.cpp
 		usb.c
-		can.c
 	)
 	add_dependencies(drivers_board arch_board_hw_info)
 
