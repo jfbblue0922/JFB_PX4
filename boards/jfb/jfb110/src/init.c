@@ -102,15 +102,27 @@ void watchdog_timer_proc(void)
  ************************************************************************************/
 __EXPORT void board_peripheral_reset(int ms)
 {
-	/* Power off Interfaces */
-	stm32_gpiowrite(GPIO_nVDD_5V_PERIPH_EN, true);
+	/* set the peripheral rails off */
+
+	VDD_5V_PERIPH_EN(false);
+//	board_control_spi_sensors_power(false, 0xffff);
+//	VDD_3V3_SENSORS4_EN(false);
+
+	bool last = READ_VDD_3V3_SPEKTRUM_POWER_EN();
+	/* Keep Spektum on to discharge rail*/
+	VDD_3V3_SPEKTRUM_POWER_EN(false);
 
 	/* wait for the peripheral rail to reach GND */
 	usleep(ms * 1000);
 	syslog(LOG_DEBUG, "reset done, %d ms\n", ms);
 
 	/* re-enable power */
-	stm32_gpiowrite(GPIO_nVDD_5V_PERIPH_EN, false);
+
+	/* switch the peripheral rail back on */
+	VDD_3V3_SPEKTRUM_POWER_EN(last);
+//	board_control_spi_sensors_power(true, 0xffff);
+//	VDD_3V3_SENSORS4_EN(true);
+	VDD_5V_PERIPH_EN(true);
 }
 
 /************************************************************************************
@@ -127,7 +139,8 @@ __EXPORT void board_peripheral_reset(int ms)
 __EXPORT void board_on_reset(int status)
 {
 	for (int i = 0; i < DIRECT_PWM_OUTPUT_CHANNELS; ++i) {
-		px4_arch_configgpio(PX4_MAKE_GPIO_INPUT(io_timer_channel_get_as_pwm_input(i)));
+//		px4_arch_configgpio(PX4_MAKE_GPIO_INPUT(io_timer_channel_get_as_pwm_input(i)));
+		px4_arch_configgpio(io_timer_channel_get_gpio_output(i));
 	}
 
 	if (status >= 0) {
@@ -146,16 +159,20 @@ __EXPORT void board_on_reset(int status)
  ************************************************************************************/
 __EXPORT void stm32_boardinitialize(void)
 {
-	/* Reset PWM first thing */
-	board_on_reset(-1);
-
-	/* configure pins */
-	const uint32_t gpio[] = PX4_GPIO_INIT_LIST;
-	px4_gpio_init(gpio, arraySize(gpio));
-	board_control_spi_sensors_power_configgpio();
+	board_on_reset(-1); /* Reset PWM first thing */
 
 	/* configure LEDs */
+
 	board_autoled_initialize();
+
+	/* configure pins */
+
+	const uint32_t gpio[] = PX4_GPIO_INIT_LIST;
+	px4_gpio_init(gpio, arraySize(gpio));
+
+	/* configure USB interfaces */
+
+	stm32_usbinitialize();
 }
 
 /****************************************************************************
@@ -178,6 +195,8 @@ __EXPORT void stm32_boardinitialize(void)
  ****************************************************************************/
 __EXPORT int board_app_initialize(uintptr_t arg)
 {
+#if !defined(BOOTLOADER)
+
 	/* Power on Interfaces */
 	VDD_3V3_SD_CARD_EN(true);
 	VDD_5V_PERIPH_EN(true);
@@ -253,6 +272,8 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 		return ret;
 	}
 #endif /* CONFIG_MMCSD */
+
+#endif /* !defined(BOOTLOADER) */
 
 	return OK;
 }
