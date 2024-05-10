@@ -183,11 +183,9 @@
 #define GPIO_TONE_ALARM_IDLE    GPIO_BUZZER_1
 #define GPIO_TONE_ALARM         GPIO_TIM14_CH1OUT_2
 
-/* PWM input driver. Use FMU AUX5 pins attached to timer8 channel 2 */
-//#define PWMIN_TIMER                       4
+/* PWM input driver. timer3 channel 1 */
 #define PWMIN_TIMER                       3
-#define PWMIN_TIMER_CHANNEL    /* T4C1 */ 1
-//#define GPIO_PWM_IN          /* PC6  */ GPIO_TIM8_CH1IN_1
+#define PWMIN_TIMER_CHANNEL    /* T3C1 */ 1
 #define GPIO_PWM_IN            /* PC6  */ GPIO_TIM3_CH1IN_3
 
 /* Define True logic Power Control in arch agnostic form */

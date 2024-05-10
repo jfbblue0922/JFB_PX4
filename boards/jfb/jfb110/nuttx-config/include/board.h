@@ -293,17 +293,7 @@
 #define STM32_SDMMC_CLKCR_EDGE      STM32_SDMMC_CLKCR_NEGEDGE
 
 /* LED definitions ******************************************************************/
-/* The PX4 FMUV6X board has three, LED_GREEN a Green LED, LED_BLUE a Blue LED and
- * LED_RED a Red LED, that can be controlled by software.
- *
- * If CONFIG_ARCH_LEDS is not defined, then the user can control the LEDs in any way.
- * The following definitions are used to access individual LEDs.
- */
-
-/* LED index values for use with board_userled() */
-
-/* LED definitions ******************************************************************/
-/* The px4_fmu-v6x board has three, LED_GREEN a Green LED, LED_BLUE a Blue LED and
+/* The JFB110 board has three, LED_GREEN a Green LED, LED_BLUE a Blue LED and
  * LED_RED a Red LED, that can be controlled by software.
  *
  * If CONFIG_ARCH_LEDS is not defined, then the user can control the LEDs in any way.
