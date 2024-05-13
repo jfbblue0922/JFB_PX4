@@ -44,20 +44,6 @@
 #include <stdint.h>
 #include <stm32_gpio.h>
 
-/* PX4IO connection configuration */
-//#define BOARD_USES_PX4IO_VERSION       2
-//#define PX4IO_SERIAL_DEVICE            "/dev/ttyS3"
-//#define PX4IO_SERIAL_TX_GPIO           GPIO_USART6_TX
-//#define PX4IO_SERIAL_RX_GPIO           GPIO_USART6_RX
-//#define PX4IO_SERIAL_BASE              STM32_USART6_BASE
-//#define PX4IO_SERIAL_VECTOR            STM32_IRQ_USART6
-//#define PX4IO_SERIAL_TX_DMAMAP         DMAMAP_USART6_TX
-//#define PX4IO_SERIAL_RX_DMAMAP         DMAMAP_USART6_RX
-//#define PX4IO_SERIAL_RCC_REG           STM32_RCC_APB2ENR
-//#define PX4IO_SERIAL_RCC_EN            RCC_APB2ENR_USART6EN
-//#define PX4IO_SERIAL_CLOCK             STM32_PCLK2_FREQUENCY
-//#define PX4IO_SERIAL_BITRATE           1500000               /* 1.5Mbps -> max rate for IO */
-
 /* LEDs */
 #define GPIO_nLED_RED        /* PE3 */  (GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTE|GPIO_PIN3)
 #define GPIO_nLED_GREEN      /* PE4 */  (GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTE|GPIO_PIN4)
@@ -155,23 +141,23 @@
 #define GPIO_nVDD_5V_HIPOWER_EN         /* PG10 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTG|GPIO_PIN10)
 #define GPIO_nVDD_5V_HIPOWER_OC         /* PF13 */ (GPIO_INPUT|GPIO_PULLUP|GPIO_PORTF|GPIO_PIN13) // VDD_5V_HIPOWER_OC
 #define GPIO_VDD_3V3_SPEKTRUM_POWER_EN  /* PH2  */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTH|GPIO_PIN2)
-#define GPIO_VDD_3V3_SD_CARD_EN         /* PC13 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN13)
-#define GPIO_GPIO_EXT_WDOG              /* PG5  */ (GPIO_OUTPUT|GPIO_PORTG|GPIO_PIN5)
-#define GPIO_GPIO_SCHA63T_RESET         /* PE7  */ (GPIO_OUTPUT|GPIO_PORTE|GPIO_PIN7)
-#define GPIO_HW_VER_REV_DRIVE           /* PG0  */ (GPIO_OUTPUT|GPIO_PORTG|GPIO_PIN0)
+#define GPIO_SD_CARD_EN                 /* PC13 */ (GPIO_INPUT|GPIO_PORTC|GPIO_PIN13)
+#define GPIO_EXT_WDOG                   /* PG5  */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN5)
+#define GPIO_SCHA63T_RESET              /* PE7  */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_OUTPUT_SET|GPIO_PORTE|GPIO_PIN7)
+#define GPIO_HW_VER_REV_DRIVE           /* PG0  */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN0)
 
-#define GPIO_GPIO_CAN1_SILENT           /* PG13 */ (GPIO_OUTPUT|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN13)
-#define GPIO_GPIO_CAN2_SILENT           /* PG8  */ (GPIO_OUTPUT|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN8)
+#define GPIO_CAN1_SILENT                /* PG13 */ (GPIO_OUTPUT|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN13)
+#define GPIO_CAN2_SILENT                /* PG8  */ (GPIO_OUTPUT|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN8)
 
-#define GPIO_GPIO_BUFFER_OE_EN          /* PD11 */ (GPIO_OUTPUT|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN11)
-#define GPIO_GPIO_BUFFER_OE2_EN         /* PD5  */ (GPIO_OUTPUT|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN5)
+#define GPIO_BUFFER_OE_EN               /* PD11 */ (GPIO_OUTPUT|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN11)
+#define GPIO_BUFFER_OE2_EN              /* PD5  */ (GPIO_OUTPUT|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN5)
 
 #define GPIO_FMU_CAP1                   /* PE11 */ (GPIO_INPUT|GPIO_PULLUP|GPIO_PORTE|GPIO_PIN11)
 #define GPIO_FMU_CAP2                   /* PB11 */ (GPIO_INPUT|GPIO_PULLUP|GPIO_PORTB|GPIO_PIN11)
 
-#define GPIO_GPIO_nARMED                /* PB10 */ (GPIO_OUTPUT|GPIO_PORTB|GPIO_PIN10)
+#define GPIO_nARMED                     /* PB10 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN10)
 
-#define GPIO_LED_SAFETY                 /* PD10 */ (GPIO_OUTPUT|GPIO_PORTD|GPIO_PIN10)
+#define GPIO_LED_SAFETY                 /* PD10 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN10)
 #define GPIO_SAFETY_SWITCH_IN           /* PF5  */ (GPIO_INPUT|GPIO_PULLDOWN|GPIO_PORTF|GPIO_PIN5)
 /* Enable the FMU to use the switch it if there is no px4io fixme:This should be BOARD_SAFTY_BUTTON() */
 #define GPIO_BTN_SAFETY GPIO_SAFETY_SWITCH_IN /* Enable the FMU to control it if there is no px4io */
@@ -195,13 +181,12 @@
 #define VDD_3V3_SENSORS2_EN(on_true)       px4_arch_gpiowrite(GPIO_VDD_3V3_SENSORS2_EN, (on_true))
 #define VDD_3V3_SENSORS3_EN(on_true)       px4_arch_gpiowrite(GPIO_VDD_3V3_SENSORS3_EN, (on_true))
 #define VDD_3V3_SPEKTRUM_POWER_EN(on_true) px4_arch_gpiowrite(GPIO_VDD_3V3_SPEKTRUM_POWER_EN, (on_true))
-#define VDD_3V3_SD_CARD_EN(on_true)        px4_arch_gpiowrite(GPIO_VDD_3V3_SD_CARD_EN, (on_true))
-#define GPIO_BUFFER_OE_EN(on_true)         px4_arch_gpiowrite(GPIO_GPIO_BUFFER_OE_EN, (on_true))
-#define GPIO_BUFFER_OE2_EN(on_true)        px4_arch_gpiowrite(GPIO_GPIO_BUFFER_OE2_EN, (on_true))
-#define GPIO_ARMED_EN(on_true)             px4_arch_gpiowrite(GPIO_GPIO_nARMED, (on_true))
+#define BUFFER_OE_EN(on_true)              px4_arch_gpiowrite(GPIO_BUFFER_OE_EN, (on_true))
+#define BUFFER_OE2_EN(on_true)             px4_arch_gpiowrite(GPIO_BUFFER_OE2_EN, (on_true))
+#define ARMED_EN(on_true)                  px4_arch_gpiowrite(GPIO_nARMED, (on_true))
 
 /* USB
- *  OTG FS: PA9  OTG_FS_VBUS VBUS sensing
+ *  OTG FS: PB3  OTG_FS_VBUS VBUS sensing
  */
 #define GPIO_OTGFS_VBUS         /* PB3 */ (GPIO_INPUT|GPIO_PULLDOWN|GPIO_SPEED_100MHz|GPIO_PORTB|GPIO_PIN3)
 
@@ -277,16 +262,16 @@
 		PX4_MAKE_GPIO_OUTPUT_CLEAR(GPIO_I2C4_SDA), \
 		GPIO_TONE_ALARM_IDLE,             \
 		GPIO_OTGFS_VBUS,                  \
-		GPIO_GPIO_EXT_WDOG,               \
-		GPIO_GPIO_SCHA63T_RESET,          \
+		GPIO_EXT_WDOG,                    \
+		GPIO_SCHA63T_RESET,               \
 		GPIO_HW_VER_REV_DRIVE,            \
-		GPIO_GPIO_CAN1_SILENT,            \
-		GPIO_GPIO_CAN2_SILENT,            \
-		GPIO_GPIO_BUFFER_OE_EN,           \
-		GPIO_GPIO_BUFFER_OE2_EN,          \
+		GPIO_CAN1_SILENT,                 \
+		GPIO_CAN2_SILENT,                 \
+		GPIO_BUFFER_OE_EN,                \
+		GPIO_BUFFER_OE2_EN,               \
 		GPIO_FMU_CAP1,                    \
 		GPIO_FMU_CAP2,                    \
-		GPIO_GPIO_nARMED,                 \
+		GPIO_nARMED,                      \
 		GPIO_LED_SAFETY,                  \
 		GPIO_SAFETY_SWITCH_IN,            \
 	}

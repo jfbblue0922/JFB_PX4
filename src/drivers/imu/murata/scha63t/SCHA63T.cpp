@@ -336,7 +336,7 @@ bool SCHA63T::write_register(uint8_t uno_due, reg_scha63t reg_addr, uint16_t val
 /* class AP_SCHA63T */
 int AP_SCHA63T::start()
 {
-	stm32_gpiowrite(GPIO_GPIO_SCHA63T_RESET, true);
+	stm32_gpiowrite(GPIO_SCHA63T_RESET, true);
 
 	// setting config
 	dev_uno->ConfigureAccel();
