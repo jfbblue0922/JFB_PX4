@@ -191,8 +191,7 @@ bool EKF2Selector::UpdateErrorScores()
 				}
 
 				if (n_gyro_exceedances > 0) {
-					//if (n_gyros >= 3) {
-					if (n_gyros > 3) {
+					if (n_gyros >= 3) {
 						// If there are 3 or more sensors, the one with the largest accumulated error is faulty
 						_gyro_fault_detected = true;
 						faulty_gyro_id = sensors_status_imu.gyro_device_ids[largest_gyro_error_index];
@@ -235,8 +234,7 @@ bool EKF2Selector::UpdateErrorScores()
 				}
 
 				if (n_accel_exceedances > 0) {
-					//if (n_accels >= 3) {
-					if (n_accels > 3) {
+					if (n_accels >= 3) {
 						// If there are 3 or more sensors, the one with the largest accumulated error is faulty
 						_accel_fault_detected = true;
 						faulty_accel_id = sensors_status_imu.accel_device_ids[largest_accel_error_index];
