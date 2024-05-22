@@ -1,5 +1,4 @@
-menuconfig DRIVERS_IMU_MURATA_SCHA63T
-	bool "murata scha63t"
-	default n
-	---help---
-		Enable support for murata scha63t
+menu "Murata"
+rsource "*/Kconfig"
+endmenu #Murata
+
