@@ -346,6 +346,11 @@
 #define GPIO_USART1_TX   GPIO_USART1_TX_3      /* PB6  */
 #define GPIO_USART1_RX   GPIO_USART1_RX_3      /* PB7  */
 
+#define GPIO_USART2_TX   GPIO_USART2_TX_2      /* PD5  */
+#define GPIO_USART2_RX   GPIO_USART2_RX_1      /* PA3  */
+#define GPIO_USART2_CTS  GPIO_USART2_CTS_NSS_2 /* PD3  */
+#define GPIO_USART2_RTS  GPIO_USART2_RTS_2     /* PD4  */
+
 #define GPIO_USART3_TX   GPIO_USART3_TX_3      /* PD8  */
 #define GPIO_USART3_RX   GPIO_USART3_RX_3      /* PD9  */
 
@@ -354,14 +359,14 @@
 
 #define GPIO_UART5_TX    GPIO_UART5_TX_3       /* PC12 */
 #define GPIO_UART5_RX    GPIO_UART5_RX_3       /* PD2  */
-//      GPIO_UART5_CTS   No Remap              /* PC9 */
-//      GPIO_UART5_RTS   No Remap              /* PC8 */
+#define GPIO_UART5_CTS   GPIO_UART5_CTS        /* PC9  */
+#define GPIO_UART5_RTS   GPIO_UART5_RTS        /* PC8  */
 
 #define GPIO_USART6_TX   GPIO_USART6_TX_2      /* PG14 (TP10) */
-#define GPIO_USART6_RX   GPIO_USART6_RX_1      /* PC7  */
+#define GPIO_USART6_RX   GPIO_USART6_RX_2      /* PG9  */
 
 #define GPIO_UART7_TX    GPIO_UART7_TX_3       /* PE8  */
-#define GPIO_UART7_RX    GPIO_UART7_RX_4       /* PF6  */
+#define GPIO_UART7_RX    GPIO_UART7_RX_3       /* PE7  */
 #define GPIO_UART7_CTS   GPIO_UART7_CTS_1      /* PE10 */
 #define GPIO_UART7_RTS   GPIO_UART7_RTS_2      /* PF8  */
 
@@ -379,8 +384,12 @@
 #define ADJ_SLEW_RATE(p) (((p) & ~GPIO_SPEED_MASK) | (GPIO_SPEED_2MHz))
 
 #define GPIO_SPI1_SCK    GPIO_SPI1_SCK_1       /* PA5  */
-#define GPIO_SPI1_MISO   GPIO_SPI1_MISO_3      /* PG9  */
+#define GPIO_SPI1_MISO   GPIO_SPI1_MISO_1      /* PA6  */
 #define GPIO_SPI1_MOSI   GPIO_SPI1_MOSI_2      /* PB5  */
+
+#define GPIO_SPI2_SCK    GPIO_SPI2_SCK_6       /* PI1  */
+#define GPIO_SPI2_MISO	 GPIO_SPI2_MISO_2      /* PC2  */
+#define GPIO_SPI2_MOSI	 GPIO_SPI2_MOSI_4      /* PI3  */
 
 #define GPIO_SPI3_SCK    GPIO_SPI3_SCK_2       /* PC10 */
 #define GPIO_SPI3_MISO   GPIO_SPI3_MISO_2      /* PC11 */
@@ -388,11 +397,11 @@
 
 #define GPIO_SPI4_SCK    GPIO_SPI4_SCK_1       /* PE12 */
 #define GPIO_SPI4_MISO   GPIO_SPI4_MISO_1      /* PE13 */
-#define GPIO_SPI4_MOSI   GPIO_SPI4_MOSI_1      /* PE14 */
+#define GPIO_SPI4_MOSI   GPIO_SPI4_MOSI_2      /* PE6  */
 
 #define GPIO_SPI5_SCK    GPIO_SPI5_SCK_1       /* PF7  */
 #define GPIO_SPI5_MISO   GPIO_SPI5_MISO_2      /* PH7  */
-#define GPIO_SPI5_MOSI   GPIO_SPI5_MOSI_1      /* PF11 */
+#define GPIO_SPI5_MOSI   GPIO_SPI5_MOSI_3      /* PJ10 */
 
 /* I2C */
 #define GPIO_I2C1_SCL GPIO_I2C1_SCL_2          /* PB8  */
@@ -410,7 +419,36 @@
 /* SDMMC2 */
 #define GPIO_SDMMC2_CK   GPIO_SDMMC2_CK_1      /* PD6  */
 #define GPIO_SDMMC2_CMD  GPIO_SDMMC2_CMD_1     /* PD7  */
-//      GPIO_SDMMC2_D0   No Remap              /* PB14 */
-//      GPIO_SDMMC2_D1   No Remap              /* PB15 */
-#define GPIO_SDMMC2_D2   GPIO_SDMMC2_D2_1      /* PG11 */
-//      GPIO_SDMMC2_D3   No Remap              /* PB4  */
+#define GPIO_SDMMC2_D0   GPIO_SDMMC2_D0        /* PB14 */
+#define GPIO_SDMMC2_D1   GPIO_SDMMC2_D1        /* PB15 */
+#define GPIO_SDMMC2_D2   GPIO_SDMMC2_D2_2      /* PB3  */
+#define GPIO_SDMMC2_D3   GPIO_SDMMC2_D3        /* PB4  */
+
+/* The STM32 H7 connects to a TI DP83848TSQ/NOPB
+ * using RMII
+ *
+ *   STM32 H7 BOARD        DP83848TSQ/NOPB
+ *   GPIO     SIGNAL       PIN NAME
+ *   -------- ------------ -------------
+ *   PA7     ETH_CRS_DV    CRS_DV
+ *   PC1     ETH_MDC       MDC
+ *   PA2     ETH_MDIO      MDIO
+ *   PA1     ETH_REF_CL    X1
+ *   PC4     ETH_RXD0      RX_D0
+ *   PC5     ETH_RXD1      RX_D1
+ *   PG11    ETH_TX_EN     TX_EN
+ *   PG13    ETH_TXD0      TX_D0
+ *   PG12    ETH_TXD1      TX_D1
+ *
+ * The PHY address is 1, since COL/PHYAD0 features a pull up.
+ */
+
+#define GPIO_ETH_RMII_CRS_DV    GPIO_ETH_RMII_CRS_DV  /* PA7  */
+#define GPIO_ETH_MDC            GPIO_ETH_MDC          /* PC1  */
+#define GPIO_ETH_MDIO           GPIO_ETH_MDIO         /* PA2  */
+#define GPIO_ETH_RMII_REF_CLK   GPIO_ETH_RMII_REF_CLK /* PA1  */
+#define GPIO_ETH_RMII_RXD0      GPIO_ETH_RMII_RXD0    /* PC4  */
+#define GPIO_ETH_RMII_RXD1      GPIO_ETH_RMII_RXD1    /* PC5  */
+#define GPIO_ETH_RMII_TX_EN	GPIO_ETH_RMII_TX_EN_2 /* PG11 */
+#define GPIO_ETH_RMII_TXD0	GPIO_ETH_RMII_TXD0_2  /* PG13 */
+#define GPIO_ETH_RMII_TXD1	GPIO_ETH_RMII_TXD1_2  /* PG12 */
