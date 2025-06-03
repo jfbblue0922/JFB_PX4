@@ -4,9 +4,6 @@
 #------------------------------------------------------------------------------
 board_adc start
 
-scha63t -A -R 0 -s -b 1 start
-scha63t -G -R 0 -s -b 1 start
-
 iim42652 -R 8 -s -b 3 start
 iim42652 -R 8 -s -b 4 start
 
