@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# Board specific sensors init
+#------------------------------------------------------------------------------
+board_adc start
+
+#IMU
+icm45686 -R 8 -s -b 2 start
+#asm330 -R 0 -s -b 3 start
+iim42653 -R 0 -s -b 1 start
+
+unset HAVE_PM2
+
+#Baro
+bmp388 -s -b 2 -T 390 start
+bmp388 -s -b 4 -T 390 start
+
+#Commpass
+# internal compass
+bmm350 -I -R 0 start
+ist8310 -I -R 8 start
+# External compass
+ist8310 -X -b 1 -R 10 start

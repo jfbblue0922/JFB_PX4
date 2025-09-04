@@ -49,11 +49,13 @@
 #pragma pack(push,1)
 struct spi_data_s {
 	uint8_t addr;
+	uint8_t dummy;
 	struct data_s data;
 };
 
 struct spi_calibration_s {
 	uint8_t addr;
+	uint8_t dummy;
 	struct calibration_s cal;
 };
 #pragma pack(pop)
@@ -66,7 +68,7 @@ public:
 
 	int init();
 
-	uint8_t get_reg(uint8_t addr);
+	int get_reg(uint8_t addr, uint8_t *value);
 	int get_reg_buf(uint8_t addr, uint8_t *buf, uint8_t len);
 	int set_reg(uint8_t value, uint8_t addr);
 	calibration_s *get_calibration(uint8_t addr);
@@ -95,18 +97,27 @@ int BMP388_SPI::init()
 	return SPI::init();
 };
 
-uint8_t BMP388_SPI::get_reg(uint8_t addr)
+int BMP388_SPI::get_reg(uint8_t addr, uint8_t *value)
 {
-	uint8_t cmd[2] = { (uint8_t)(addr | DIR_READ), 0}; //set MSB bit
-	transfer(&cmd[0], &cmd[0], 2);
+	uint8_t cmd[3] = { (uint8_t)(addr | DIR_READ), 0, 0}; //set MSB bit
+	int ret = transfer(&cmd[0], &cmd[0], 3);
 
-	return cmd[1];
+	if (ret == OK) {
+		*value = cmd[2];
+	}
+
+	return ret;
 }
 
 int BMP388_SPI::get_reg_buf(uint8_t addr, uint8_t *buf, uint8_t len)
 {
 	uint8_t cmd[1] = {(uint8_t)(addr | DIR_READ)};
-	return transfer(&cmd[0], buf, len);
+	uint8_t tmp_buf[len + 2];
+	int ret = transfer(&cmd[0], tmp_buf, len + 2);
+
+	memcpy(buf, &tmp_buf[2], len);
+
+	return ret;
 }
 
 int BMP388_SPI::set_reg(uint8_t value, uint8_t addr)
