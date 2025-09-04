@@ -47,7 +47,7 @@
 __EXPORT
 uint16_t board_get_can_interfaces(void)
 {
-	return 0x3;
+	return 0x2;
 }
 
 #else

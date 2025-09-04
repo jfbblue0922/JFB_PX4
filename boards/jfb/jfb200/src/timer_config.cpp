@@ -36,29 +36,27 @@
 constexpr io_timers_t io_timers[MAX_IO_TIMERS] = {
 	initIOTimer(Timer::Timer1),
 	initIOTimer(Timer::Timer3),
-	initIOTimer(Timer::Timer4, DMA{DMA::Index1}),
-	initIOTimer(Timer::Timer5, DMA{DMA::Index1}),
-	initIOTimer(Timer::Timer12),
-	initIOTimer(Timer::Timer15),
+	initIOTimer(Timer::Timer4),
+	initIOTimer(Timer::Timer8),
 };
 
 constexpr timer_io_channels_t timer_io_channels[MAX_TIMER_IO_CHANNELS] = {
-	initIOTimerChannel(io_timers, {Timer::Timer15, Timer::Channel1}, {GPIO::PortA, GPIO::Pin2}),   // pwm(1)
-	initIOTimerChannel(io_timers, {Timer::Timer15, Timer::Channel2}, {GPIO::PortE, GPIO::Pin6}),   // pwm(2)
-	initIOTimerChannel(io_timers, {Timer::Timer3,  Timer::Channel2}, {GPIO::PortA, GPIO::Pin7}),   // pwm(3)
-	initIOTimerChannel(io_timers, {Timer::Timer3,  Timer::Channel1}, {GPIO::PortA, GPIO::Pin6}),   // pwm(4)
-	initIOTimerChannel(io_timers, {Timer::Timer4,  Timer::Channel4}, {GPIO::PortD, GPIO::Pin15}),  // pwm(5)
-	initIOTimerChannel(io_timers, {Timer::Timer1,  Timer::Channel1}, {GPIO::PortE, GPIO::Pin9}),   // pwm(6)
-	initIOTimerChannel(io_timers, {Timer::Timer5,  Timer::Channel2}, {GPIO::PortH, GPIO::Pin11}),  // pwm(7)
-	initIOTimerChannel(io_timers, {Timer::Timer5,  Timer::Channel1}, {GPIO::PortH, GPIO::Pin10}),  // pwm(8)
-	initIOTimerChannel(io_timers, {Timer::Timer1,  Timer::Channel3}, {GPIO::PortA, GPIO::Pin10}),  // pwm(9)
-	initIOTimerChannel(io_timers, {Timer::Timer1,  Timer::Channel2}, {GPIO::PortA, GPIO::Pin9}),   // pwm(10)
-	initIOTimerChannel(io_timers, {Timer::Timer4,  Timer::Channel3}, {GPIO::PortD, GPIO::Pin14}),  // pwm(11)
-	initIOTimerChannel(io_timers, {Timer::Timer4,  Timer::Channel2}, {GPIO::PortD, GPIO::Pin13}),  // pwm(12)
-	initIOTimerChannel(io_timers, {Timer::Timer4,  Timer::Channel1}, {GPIO::PortD, GPIO::Pin12}),  // pwm(13)
-	initIOTimerChannel(io_timers, {Timer::Timer12, Timer::Channel2}, {GPIO::PortH, GPIO::Pin9}),   // pwm(14)
-	initIOTimerChannel(io_timers, {Timer::Timer5,  Timer::Channel3}, {GPIO::PortH, GPIO::Pin12}),  // pwm(15)
-	initIOTimerChannel(io_timers, {Timer::Timer12, Timer::Channel1}, {GPIO::PortH, GPIO::Pin6}),   // pwm(16)
+	initIOTimerChannel(io_timers, {Timer::Timer1, Timer::Channel1}, {GPIO::PortE, GPIO::Pin9}),     // pwm(1)
+	initIOTimerChannel(io_timers, {Timer::Timer1, Timer::Channel2}, {GPIO::PortJ, GPIO::Pin11}),    // pwm(2)
+	initIOTimerChannel(io_timers, {Timer::Timer1, Timer::Channel3}, {GPIO::PortA, GPIO::Pin10}),    // pwm(3)
+	initIOTimerChannel(io_timers, {Timer::Timer1, Timer::Channel4}, {GPIO::PortE, GPIO::Pin14}),    // pwm(4)
+	initIOTimerChannel(io_timers, {Timer::Timer3, Timer::Channel1}, {GPIO::PortC, GPIO::Pin6}),     // pwm(5)
+	initIOTimerChannel(io_timers, {Timer::Timer3, Timer::Channel2}, {GPIO::PortC, GPIO::Pin7}),     // pwm(6)
+	initIOTimerChannel(io_timers, {Timer::Timer3, Timer::Channel3}, {GPIO::PortB, GPIO::Pin0}),     // pwm(7)
+	initIOTimerChannel(io_timers, {Timer::Timer3, Timer::Channel4}, {GPIO::PortB, GPIO::Pin1}),     // pwm(8)
+	initIOTimerChannel(io_timers, {Timer::Timer4, Timer::Channel1}, {GPIO::PortD, GPIO::Pin12}),    // pwm(9)
+	initIOTimerChannel(io_timers, {Timer::Timer4, Timer::Channel2}, {GPIO::PortD, GPIO::Pin13}),    // pwm(10)
+	initIOTimerChannel(io_timers, {Timer::Timer4, Timer::Channel3}, {GPIO::PortD, GPIO::Pin14}),    // pwm(11)
+	initIOTimerChannel(io_timers, {Timer::Timer4, Timer::Channel4}, {GPIO::PortD, GPIO::Pin15}),    // pwm(12)
+	initIOTimerChannel(io_timers, {Timer::Timer8, Timer::Channel1}, {GPIO::PortI, GPIO::Pin5}),     // pwm(13)
+	initIOTimerChannel(io_timers, {Timer::Timer8, Timer::Channel2}, {GPIO::PortI, GPIO::Pin6}),     // pwm(14)
+	initIOTimerChannel(io_timers, {Timer::Timer8, Timer::Channel3}, {GPIO::PortI, GPIO::Pin7}),     // pwm(15)
+	initIOTimerChannel(io_timers, {Timer::Timer8, Timer::Channel4}, {GPIO::PortI, GPIO::Pin2}),     // pwm(16)
 };
 
 constexpr io_timers_channel_mapping_t io_timers_channel_mapping =

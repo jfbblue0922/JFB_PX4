@@ -293,7 +293,7 @@
 #define STM32_SDMMC_CLKCR_EDGE      STM32_SDMMC_CLKCR_NEGEDGE
 
 /* LED definitions ******************************************************************/
-/* The JFB110 board has three, LED_GREEN a Green LED, LED_BLUE a Blue LED and
+/* The JFB200 board has three, LED_GREEN a Green LED, LED_BLUE a Blue LED and
  * LED_RED a Red LED, that can be controlled by software.
  *
  * If CONFIG_ARCH_LEDS is not defined, then the user can control the LEDs in any way.
@@ -343,80 +343,99 @@
  */
 
 /* UART/USART */
-#define GPIO_USART1_TX   GPIO_USART1_TX_3      /* PB6  */
-#define GPIO_USART1_RX   GPIO_USART1_RX_3      /* PB7  */
+#define GPIO_USART1_TX  GPIO_USART1_TX_3    /* PB6  */
+#define GPIO_USART1_RX  GPIO_USART1_RX_3    /* PB7  */
 
-#define GPIO_USART3_TX   GPIO_USART3_TX_3      /* PD8  */
-#define GPIO_USART3_RX   GPIO_USART3_RX_3      /* PD9  */
+#define GPIO_USART2_TX  GPIO_USART2_TX_2    /* PD5  */
+#define GPIO_USART2_RX  GPIO_USART2_RX_1    /* PA3  */
 
-#define GPIO_UART4_TX    GPIO_UART4_TX_6       /* PH13 */
-#define GPIO_UART4_RX    GPIO_UART4_RX_6       /* PH14 */
+#define GPIO_USART3_TX  GPIO_USART3_TX_3    /* PD8  */
+#define GPIO_USART3_RX  GPIO_USART3_RX_3    /* PD9  */
 
-#define GPIO_UART5_TX    GPIO_UART5_TX_3       /* PC12 */
-#define GPIO_UART5_RX    GPIO_UART5_RX_3       /* PD2  */
-#define GPIO_UART5_CTS   GPIO_UART5_CTS_0      /* PC9 */
-#define GPIO_UART5_RTS   GPIO_UART5_RTS_0      /* PC8 */
+#define GPIO_UART4_TX   GPIO_UART4_TX_6     /* PH13 */
+#define GPIO_UART4_RX   GPIO_UART4_RX_6     /* PH14 */
 
-#define GPIO_USART6_TX   GPIO_USART6_TX_2      /* PG14 (TP10) */
-#define GPIO_USART6_RX   GPIO_USART6_RX_1      /* PC7  */
+#define GPIO_UART5_TX   GPIO_UART5_TX_3     /* PC12 */
+#define GPIO_UART5_RX   GPIO_UART5_RX_3     /* PD2  */
+#define GPIO_UART5_CTS  GPIO_UART5_CTS_0    /* PC9  */
+#define GPIO_UART5_RTS  GPIO_UART5_RTS_0    /* PC8  */
 
-#define GPIO_UART7_TX    GPIO_UART7_TX_3       /* PE8  */
-#define GPIO_UART7_RX    GPIO_UART7_RX_4       /* PF6  */
-#define GPIO_UART7_CTS   GPIO_UART7_CTS_1      /* PE10 */
-#define GPIO_UART7_RTS   GPIO_UART7_RTS_2      /* PF8  */
+// 【ToDo】EMではRXポートが衝突しているため、USART6を無効にした。
+// #define GPIO_USART6_TX  GPIO_USART6_TX_2    /* PG14 (TP10) */
+// #define GPIO_USART6_RX  GPIO_USART6_RX_2    /* PG9 */
 
-#define GPIO_UART8_TX    GPIO_UART8_TX_1       /* PE1 */
-#define GPIO_UART8_RX    GPIO_UART8_RX_1       /* PE0 (TP3) */
+#define GPIO_UART7_TX   GPIO_UART7_TX_3     /* PE8  */
+#define GPIO_UART7_RX   GPIO_UART7_RX_3     /* PE7  */
+#define GPIO_UART7_CTS  GPIO_UART7_CTS_1    /* PE10 */
+#define GPIO_UART7_RTS  GPIO_UART7_RTS_2    /* PF8  */
+
+#define GPIO_UART8_TX   GPIO_UART8_TX_1     /* PE1  */
+#define GPIO_UART8_RX   GPIO_UART8_RX_1     /* PE0 (TP3) */
 
 /* CAN */
-#define GPIO_CAN1_RX     GPIO_CAN1_RX_3        /* PD0  */
-#define GPIO_CAN1_TX     GPIO_CAN1_TX_3        /* PD1  */
+#define GPIO_FDCAN1_RX  GPIO_CAN1_RX_3      /* PD0  */
+#define GPIO_FDCAN1_TX  GPIO_CAN1_TX_3      /* PD1  */
 
-#define GPIO_CAN2_RX     GPIO_CAN2_RX_1        /* PB12 */
-#define GPIO_CAN2_TX     GPIO_CAN2_TX_1        /* PB13 */
+#define GPIO_FDCAN2_RX  GPIO_CAN2_RX_1      /* PB12 */
+#define GPIO_FDCAN2_TX  GPIO_CAN2_TX_1      /* PB13 */
 
 /* SPI */
 #define ADJ_SLEW_RATE(p) (((p) & ~GPIO_SPEED_MASK) | (GPIO_SPEED_2MHz))
 
-#define GPIO_SPI1_SCK    GPIO_SPI1_SCK_1       /* PA5  */
-#define GPIO_SPI1_MISO   GPIO_SPI1_MISO_3      /* PG9  */
-#define GPIO_SPI1_MOSI   GPIO_SPI1_MOSI_2      /* PB5  */
+#define GPIO_SPI1_SCK   GPIO_SPI1_SCK_1     /* PA5  */
+#define GPIO_SPI1_MISO  GPIO_SPI1_MISO_1    /* PA6  */
+#define GPIO_SPI1_MOSI  GPIO_SPI1_MOSI_2    /* PB5  */
 
-#define GPIO_SPI3_SCK    GPIO_SPI3_SCK_2       /* PC10 */
-#define GPIO_SPI3_MISO   GPIO_SPI3_MISO_2      /* PC11 */
-#define GPIO_SPI3_MOSI   GPIO_SPI3_MOSI_3      /* PB2  */
+#define GPIO_SPI2_SCK   GPIO_SPI2_SCK_6     /* PI1  */
+#define GPIO_SPI2_MISO  GPIO_SPI2_MISO_2    /* PC2  */
+#define GPIO_SPI2_MOSI  GPIO_SPI2_MOSI_4    /* PI3  */
 
-#define GPIO_SPI4_SCK    GPIO_SPI4_SCK_1       /* PE12 */
-#define GPIO_SPI4_MISO   GPIO_SPI4_MISO_1      /* PE13 */
-#define GPIO_SPI4_MOSI   GPIO_SPI4_MOSI_1      /* PE14 */
+#define GPIO_SPI3_SCK   GPIO_SPI3_SCK_2     /* PC10 */
+#define GPIO_SPI3_MISO  GPIO_SPI3_MISO_2    /* PC11 */
+#define GPIO_SPI3_MOSI  GPIO_SPI3_MOSI_3    /* PB2  */
 
-#define GPIO_SPI5_SCK    GPIO_SPI5_SCK_1       /* PF7  */
-#define GPIO_SPI5_MISO   GPIO_SPI5_MISO_2      /* PH7  */
-#define GPIO_SPI5_MOSI   GPIO_SPI5_MOSI_1      /* PF11 */
+#define GPIO_SPI4_SCK   GPIO_SPI4_SCK_1     /* PE12 */
+#define GPIO_SPI4_MISO  GPIO_SPI4_MISO_1    /* PE13 */
+#define GPIO_SPI4_MOSI  GPIO_SPI4_MOSI_2    /* PE6  */
+
+#define GPIO_SPI5_SCK   GPIO_SPI5_SCK_1     /* PF7  */
+#define GPIO_SPI5_MISO  GPIO_SPI5_MISO_2    /* PH7  */
+#define GPIO_SPI5_MOSI  GPIO_SPI5_MOSI_3    /* PJ10 */
 
 /* I2C */
-#define GPIO_I2C1_SCL GPIO_I2C1_SCL_2          /* PB8  */
-#define GPIO_I2C1_SDA GPIO_I2C1_SDA_2          /* PB9  */
+#define GPIO_I2C1_SCL   GPIO_I2C1_SCL_2     /* PB8  */
+#define GPIO_I2C1_SDA   GPIO_I2C1_SDA_2     /* PB9  */
 
-#define GPIO_I2C2_SCL GPIO_I2C2_SCL_2          /* PF1  */
-#define GPIO_I2C2_SDA GPIO_I2C2_SDA_2          /* PF0  */
+#define GPIO_I2C2_SCL   GPIO_I2C2_SCL_2     /* PF1  */
+#define GPIO_I2C2_SDA   GPIO_I2C2_SDA_2     /* PF0  */
 
-#define GPIO_I2C3_SCL GPIO_I2C3_SCL_1          /* PA8  */
-#define GPIO_I2C3_SDA GPIO_I2C3_SDA_2          /* PH8  */
+#define GPIO_I2C3_SCL   GPIO_I2C3_SCL_1     /* PA8  */
+#define GPIO_I2C3_SDA   GPIO_I2C3_SDA_2     /* PH8  */
 
-#define GPIO_I2C4_SCL GPIO_I2C4_SCL_2          /* PF14 */
-#define GPIO_I2C4_SDA GPIO_I2C4_SDA_2          /* PF15 */
+#define GPIO_I2C4_SCL   GPIO_I2C4_SCL_2     /* PF14 */
+#define GPIO_I2C4_SDA   GPIO_I2C4_SDA_2     /* PF15 */
 
 /* SDMMC2 */
-#define GPIO_SDMMC2_CK   GPIO_SDMMC2_CK_1      /* PD6  */
-#define GPIO_SDMMC2_CMD  GPIO_SDMMC2_CMD_1     /* PD7  */
-#define GPIO_SDMMC2_D0   GPIO_SDMMC2_D0_0      /* PB14 */
-#define GPIO_SDMMC2_D1   GPIO_SDMMC2_D1_0      /* PB15 */
-#define GPIO_SDMMC2_D2   GPIO_SDMMC2_D2_1      /* PG11 */
-#define GPIO_SDMMC2_D3   GPIO_SDMMC2_D3_0      /* PB4  */
+#define GPIO_SDMMC2_CK  GPIO_SDMMC2_CK_1    /* PD6  */
+#define GPIO_SDMMC2_CMD GPIO_SDMMC2_CMD_1   /* PD7  */
+#define GPIO_SDMMC2_D0  GPIO_SDMMC2_D0_0    /* PB14 */
+#define GPIO_SDMMC2_D1  GPIO_SDMMC2_D1_0    /* PB15 */
+#define GPIO_SDMMC2_D2  GPIO_SDMMC2_D2_2    /* PB3  */
+#define GPIO_SDMMC2_D3  GPIO_SDMMC2_D3_0    /* PB4  */
 
 /* OTG_FS */
-#define GPIO_OTGFS_DM    GPIO_OTGFS_DM_0       /* PA11 */
-#define GPIO_OTGFS_DP    GPIO_OTGFS_DP_0       /* PA12 */
-#define GPIO_OTGFS_ID    GPIO_OTGFS_ID_0       /* PA10 */
-#define GPIO_OTGFS_SOF   GPIO_OTGFS_SOF_0      /* PA8  */
+#define GPIO_OTGFS_DM    GPIO_OTGFS_DM_0    /* PA11 */
+#define GPIO_OTGFS_DP    GPIO_OTGFS_DP_0    /* PA12 */
+
+/* ETHER */
+#define GPIO_ETH_MDC            GPIO_ETH_MDC_0          /* PC1 */
+#define GPIO_ETH_MDIO_CLK       GPIO_ETH_MDIO_0         /* PA2 */
+#define GPIO_ETH_RMII_CRS_DV    GPIO_ETH_RMII_CRS_DV_0  /* PA7 */
+#define GPIO_ETH_RMII_REF_CLK   GPIO_ETH_RMII_REF_CLK_0 /* PA1 */
+#define GPIO_ETH_RMII_RXD0      GPIO_ETH_RMII_RXD0_0    /* PC4 */
+#define GPIO_ETH_RMII_RXD1      GPIO_ETH_RMII_RXD1_0    /* PC5 */
+#define GPIO_ETH_RMII_TX_EN     GPIO_ETH_RMII_TX_EN_2   /* PG11 */
+#define GPIO_ETH_RMII_TXD0      GPIO_ETH_RMII_TXD0_2    /* PG13 */
+#define GPIO_ETH_RMII_TXD1      GPIO_ETH_RMII_TXD1_2    /* PG12 */
+
+

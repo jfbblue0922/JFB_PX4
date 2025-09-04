@@ -1,10 +1,10 @@
 {
-    "board_id": 1110,
+    "board_id": 1200,
     "magic": "PX4FWv1",
-    "description": "Firmware for the JFB JFB-110 board",
+    "description": "Firmware for the JFB JFB-200 board",
     "image": "",
     "build_time": 0,
-    "summary": "JFB110",
+    "summary": "JFB200",
     "version": "0.1",
     "image_size": 0,
     "image_maxsize": 1966080,

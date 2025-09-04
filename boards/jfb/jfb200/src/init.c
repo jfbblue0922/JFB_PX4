@@ -89,7 +89,7 @@ void watchdog_timer_proc(void)
 	if (_sw_count >= 50) {	// 50ms
 		_sw_count = 0;
 		_sw ^= 1;
-		stm32_gpiowrite(GPIO_EXT_WDOG, _sw);
+		stm32_gpiowrite(GPIO_WDOG, _sw);
 	}
 
 	_sw_count++;
@@ -194,7 +194,6 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 	VDD_3V3_SENSORS3_EN(true);
 	VDD_3V3_SPEKTRUM_POWER_EN(true);
 	BUFFER_OE_EN(true);
-	BUFFER_OE2_EN(true);
 
 	board_control_spi_sensors_power(true, 0xffff);
 

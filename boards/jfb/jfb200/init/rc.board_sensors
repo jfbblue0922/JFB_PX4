@@ -4,15 +4,15 @@
 #------------------------------------------------------------------------------
 board_adc start
 
-iim42652 -R 8 -s -b 3 start
-iim42652 -R 8 -s -b 4 start
+icm45686 -R 2 -s -b 2 start
+icm42688p -R 8 -s -b 1 start
 
 unset HAVE_PM2
 
-ms5611 -s -b 1 start
+icp201xx -s -b 3 start
 ms5611 -s -b 4 start
 
 # internal compass
-ist8310 -I -R 6 start
+ist8310 -I -R 0 start
 # External compass
 ist8310 -X -b 1 -R 10 start

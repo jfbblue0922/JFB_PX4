@@ -37,24 +37,33 @@
 
 constexpr px4_spi_bus_t px4_spi_buses[SPI_BUS_MAX_BUS_ITEMS] = {
 	initSPIBus(SPI::Bus::SPI1, {
-		initSPIDevice(DRV_BARO_DEVTYPE_MS5611, SPI::CS{GPIO::PortH, GPIO::Pin5}),
+		/* (IMU) ICM-42688-P, CS:PJ3 */
+		initSPIDevice(DRV_IMU_DEVTYPE_ICM42688P, SPI::CS{GPIO::PortJ, GPIO::Pin3}),
+		/* (FRAM) FM25V02A-DGTR, CS:PK5 */
+		initSPIDevice(SPIDEV_FLASH(0), SPI::CS{GPIO::PortK, GPIO::Pin5}),
+	}, {GPIO::PortJ, GPIO::Pin2}),
 
-		initSPIDevice(SPIDEV_FLASH(1), SPI::CS{GPIO::PortG, GPIO::Pin6}),
-	}, {GPIO::PortG, GPIO::Pin12}),
+	initSPIBus(SPI::Bus::SPI2, {
+		/* (IMU) ICM-42688-P, CS:PI4 */
+		initSPIDevice(DRV_IMU_DEVTYPE_ICM45686, SPI::CS{GPIO::PortI, GPIO::Pin4}),
+		/* (Baro) BMP390, CS:PI2 */
+		initSPIDevice(DRV_BARO_DEVTYPE_BMP390, SPI::CS{GPIO::PortF, GPIO::Pin2}),
+	}, {GPIO::PortJ, GPIO::Pin2}),
 
 	initSPIBus(SPI::Bus::SPI3, {
-		initSPIDevice(DRV_IMU_DEVTYPE_IIM42652, SPI::CS{GPIO::PortF, GPIO::Pin10}, SPI::DRDY{GPIO::PortF, GPIO::Pin3}),
-
-		initSPIDevice(SPIDEV_FLASH(0), SPI::CS{GPIO::PortG, GPIO::Pin7}),
-	}, {GPIO::PortG, GPIO::Pin12}),
+		/* (Baro) ICP-20100, CS:PI9 */
+		initSPIDevice(DRV_BARO_DEVTYPE_ICP201XX, SPI::CS{GPIO::PortI, GPIO::Pin9}),
+	}, {GPIO::PortJ, GPIO::Pin2}),
 
 	initSPIBus(SPI::Bus::SPI4, {
-		initSPIDevice(DRV_IMU_DEVTYPE_IIM42652, SPI::CS{GPIO::PortG, GPIO::Pin15}, SPI::DRDY{GPIO::PortA, GPIO::Pin15}),
-
+		/* (Baro) MS561101BA03-50, CS:PH15 */
 		initSPIDevice(DRV_BARO_DEVTYPE_MS5611, SPI::CS{GPIO::PortH, GPIO::Pin15}),
-	}, {GPIO::PortG, GPIO::Pin12}),
+		/* (EEPROM) AT25512-TH-T, CS:PG6 */
+		initSPIDevice(SPIDEV_FLASH(1), SPI::CS{GPIO::PortG, GPIO::Pin6}),
+	}, {GPIO::PortJ, GPIO::Pin2}),
 
 	initSPIBusExternal(SPI::Bus::SPI5, {
+		/* External, CS:PE2 */
 		initSPIConfigExternal(SPI::CS{GPIO::PortE, GPIO::Pin2}),
 	}),
 };
