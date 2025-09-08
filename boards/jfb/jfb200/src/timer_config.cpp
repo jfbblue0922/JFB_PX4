@@ -38,6 +38,7 @@ constexpr io_timers_t io_timers[MAX_IO_TIMERS] = {
 	initIOTimer(Timer::Timer3),
 	initIOTimer(Timer::Timer4),
 	initIOTimer(Timer::Timer8),
+	initIOTimer(Timer::Timer12),
 };
 
 constexpr timer_io_channels_t timer_io_channels[MAX_TIMER_IO_CHANNELS] = {

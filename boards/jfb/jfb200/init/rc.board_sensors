@@ -9,7 +9,8 @@ icm42688p -R 8 -s -b 1 start
 
 unset HAVE_PM2
 
-icp201xx -s -b 3 start
+#icp201xxはSPI通信が実装されていない
+#icp201xx -s -b 3 start
 ms5611 -s -b 4 start
 
 # internal compass
