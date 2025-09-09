@@ -305,7 +305,7 @@
 #define STM32_SDMMC_CLKCR_EDGE      STM32_SDMMC_CLKCR_NEGEDGE
 
 /* LED definitions ******************************************************************/
-/* The JFB200 board has three, LED_GREEN a Green LED, LED_BLUE a Blue LED and
+/* The JFB-200-EM board has three, LED_GREEN a Green LED, LED_BLUE a Blue LED and
  * LED_RED a Red LED, that can be controlled by software.
  *
  * If CONFIG_ARCH_LEDS is not defined, then the user can control the LEDs in any way.
