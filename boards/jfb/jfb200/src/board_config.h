@@ -121,20 +121,20 @@
 /* Power supply control and monitoring GPIOs */
 #define GPIO_VDD_3V3_SENSORS_EN     /* PJ2  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTJ | GPIO_PIN2)
 #define GPIO_VDD_3V3_GPS_EN         /* PG0  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTG | GPIO_PIN0)
-#define GPIO_BUZZER_VCC_EN          /* PJ4  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTJ | GPIO_PIN4)
+#define GPIO_VDD_3V3_BUZZER_VCC_EN  /* PJ4  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTJ | GPIO_PIN4)
 #define GPIO_VDD_5V_PERIPH_CEn      /* PK1  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_SET | GPIO_PORTK | GPIO_PIN1)
 #define GPIO_VDD_5V_HIPOWER_CEn     /* PG10 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_SET | GPIO_PORTG | GPIO_PIN10)
 #define GPIO_VDD_3V3_SPEKTRUM_EN    /* PA15 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTA | GPIO_PIN15)
 
 #define BOARD_NUMBER_BRICKS     2   /* BRICKS信号は3つあるが、ADC変換で測定できるのは、BRICKとBRICK2だけなのため「2」とする。
-                                     * この定義で、電圧と電源のADC変換CHを変換テーブルを定義するため、ADC変換がない場合CHを割り当てられないだめである。 */
+                                     * この定義で、電圧と電源のADC変換CHを変換テーブルを定義するため、ADC変換がない場合CHを割り当てられないためである。 */
 #define GPIO_VDD_BRICK1_VALIDn      /* PG1 */   (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTG | GPIO_PIN1)
 #define GPIO_VDD_BRICK2_VALIDn      /* PG2 */   (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTG | GPIO_PIN2)
 #define GPIO_VDD_BRICK3_VALIDn      /* PG3 */   (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTG | GPIO_PIN3)
 #define GPIO_VDD_5V_PERIPH_FAULTn   /* PJ15 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTJ | GPIO_PIN15)
 #define GPIO_VDD_5V_HIPOWER_FAULTn  /* PF10 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTF | GPIO_PIN10)
-#define GPIO_VBUS_RESERVED          /* PA9 */   (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTA | GPIO_PIN9)   /* for USB_CONNECTED */
-#define GPIO_5V_HEATER_FAULTn       /* PD11 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTD | GPIO_PIN11)
+#define GPIO_VBUS_RESERVED          /* PA10 */  (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTA | GPIO_PIN10)  /* for USB_CONNECTED */
+#define GPIO_5V_HEATER_FAULTn       /* PE15 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTE | GPIO_PIN15)
 
 /* Others GPIO */
 #define GPIO_BUZZER_1               /* PF9  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTF | GPIO_PIN9)    /* ALARM */
@@ -158,8 +158,8 @@
 #define VDD_5V_PERIPH_EN(on_true)           px4_arch_gpiowrite(GPIO_VDD_5V_PERIPH_CEn, !(on_true))      /* PK1  */
 #define VDD_5V_HIPOWER_EN(on_true)          px4_arch_gpiowrite(GPIO_VDD_5V_HIPOWER_CEn, !(on_true))     /* PG10 */
 #define VDD_3V3_SENSORS_EN(on_true)         px4_arch_gpiowrite(GPIO_VDD_3V3_SENSORS_EN, (on_true))      /* PJ2  */
-#define VDD_3V3_SENSORS2_EN(on_true)        px4_arch_gpiowrite(GPIO_VDD_3V3_GPS_EN, (on_true))          /* PG0  */
-#define VDD_3V3_SENSORS3_EN(on_true)        px4_arch_gpiowrite(GPIO_BUZZER_VCC_EN, (on_true))           /* PJ4  */
+#define VDD_3V3_GPS_EN(on_true)             px4_arch_gpiowrite(GPIO_VDD_3V3_GPS_EN, (on_true))          /* PG0  */
+#define VDD_3V3_BUZZER_VCC_EN(on_true)      px4_arch_gpiowrite(GPIO_VDD_3V3_BUZZER_VCC_EN, (on_true))   /* PJ4  */
 #define VDD_3V3_SPEKTRUM_POWER_EN(on_true)  px4_arch_gpiowrite(GPIO_VDD_3V3_SPEKTRUM_EN, (on_true))     /* PA15 */
 
 /* By Providing BOARD_ADC_USB_CONNECTED (using the px4_arch abstraction)
@@ -250,7 +250,7 @@
 		GPIO_5V_HEATER_FAULTn,          \
 		GPIO_VDD_3V3_SENSORS_EN,        \
 		GPIO_VDD_3V3_GPS_EN,            \
-		GPIO_BUZZER_VCC_EN,             \
+		GPIO_VDD_3V3_BUZZER_VCC_EN,     \
 		GPIO_VDD_5V_PERIPH_CEn,         \
 		GPIO_VDD_5V_HIPOWER_CEn,        \
 		GPIO_VDD_3V3_SPEKTRUM_EN,       \

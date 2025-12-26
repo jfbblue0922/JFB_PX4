@@ -355,7 +355,7 @@
  */
 
 /* UART/USART */
-#define GPIO_USART1_TX  GPIO_USART1_TX_3    /* PB6  */
+#define GPIO_USART1_TX  GPIO_USART1_TX_2    /* PA9  */
 #define GPIO_USART1_RX  GPIO_USART1_RX_3    /* PB7  */
 
 #define GPIO_USART2_TX  GPIO_USART2_TX_2    /* PD5  */
@@ -372,9 +372,8 @@
 #define GPIO_UART5_CTS  GPIO_UART5_CTS_0    /* PC9  */
 #define GPIO_UART5_RTS  GPIO_UART5_RTS_0    /* PC8  */
 
-// 【ToDo】EMではRXポートが衝突しているため、USART6を無効にした。
-// #define GPIO_USART6_TX  GPIO_USART6_TX_2    /* PG14 (TP10) */
-// #define GPIO_USART6_RX  GPIO_USART6_RX_2    /* PG9 */
+#define GPIO_USART6_TX  GPIO_USART6_TX_2    /* PG14 */
+#define GPIO_USART6_RX  GPIO_USART6_RX_2    /* PG9 */
 
 #define GPIO_UART7_TX   GPIO_UART7_TX_3     /* PE8  */
 #define GPIO_UART7_RX   GPIO_UART7_RX_3     /* PE7  */
@@ -382,7 +381,7 @@
 #define GPIO_UART7_RTS  GPIO_UART7_RTS_2    /* PF8  */
 
 #define GPIO_UART8_TX   GPIO_UART8_TX_1     /* PE1  */
-#define GPIO_UART8_RX   GPIO_UART8_RX_1     /* PE0 (TP3) */
+#define GPIO_UART8_RX   GPIO_UART8_RX_1     /* PE0  */
 
 /* CAN */
 #define GPIO_FDCAN1_RX  GPIO_CAN1_RX_3      /* PD0  */
@@ -439,7 +438,7 @@
 #define GPIO_OTGFS_DM    GPIO_OTGFS_DM_0    /* PA11 */
 #define GPIO_OTGFS_DP    GPIO_OTGFS_DP_0    /* PA12 */
 #define GPIO_OTGFS_ID    GPIO_OTGFS_ID_0    /* PA10 */
-#define GPIO_OTGFS_SOF   GPIO_OTGFS_SOF_0   /* PA8  */
+// #define GPIO_OTGFS_SOF   GPIO_OTGFS_SOF_0   /* PA8  */
 
 /* ETHER */
 #define GPIO_ETH_MDC            GPIO_ETH_MDC_0          /* PC1 */

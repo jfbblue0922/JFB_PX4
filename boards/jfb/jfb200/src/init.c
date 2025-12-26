@@ -190,8 +190,8 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 	VDD_5V_PERIPH_EN(true);
 	VDD_5V_HIPOWER_EN(true);
 	VDD_3V3_SENSORS_EN(true);
-	VDD_3V3_SENSORS2_EN(true);
-	VDD_3V3_SENSORS3_EN(true);
+	VDD_3V3_GPS_EN(true);
+	VDD_3V3_BUZZER_VCC_EN(true);
 	VDD_3V3_SPEKTRUM_POWER_EN(true);
 	BUFFER_OE_EN(true);
 
