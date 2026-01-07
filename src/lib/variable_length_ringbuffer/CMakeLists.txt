@@ -1,6 +1,6 @@
 ############################################################################
 #
-#   Copyright (c) 2016 PX4 Development Team. All rights reserved.
+#   Copyright (c) 2023 PX4 Development Team. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,28 +31,12 @@
 #
 ############################################################################
 
-add_library(drivers_board
-	can.c
-	i2c.cpp
-	init.cpp
-	led.c
-	mtd.cpp
-	sdio.c
-	spi.cpp
-	timer_config.cpp
-	usb.c
+px4_add_library(variable_length_ringbuffer
+	VariableLengthRingbuffer.cpp
 )
 
-add_dependencies(drivers_board platform_gpio_mcp23009)
+target_link_libraries(variable_length_ringbuffer PRIVATE ringbuffer)
 
-target_link_libraries(drivers_board
-	PRIVATE
-		arch_io_pins
-		arch_spi
-		arch_board_hw_info
-		drivers__led # drv_led_start
-		nuttx_arch # sdio
-		nuttx_drivers # sdio
-		px4_layer
-		platform_gpio_mcp23009
-)
+target_include_directories(variable_length_ringbuffer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+px4_add_unit_gtest(SRC VariableLengthRingbufferTest.cpp LINKLIBS variable_length_ringbuffer)
