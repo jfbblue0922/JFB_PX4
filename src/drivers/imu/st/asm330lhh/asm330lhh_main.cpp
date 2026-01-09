@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (C) 2020, 2022 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2026 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,41 +31,57 @@
  *
  ****************************************************************************/
 
-#include <px4_arch/spi_hw_description.h>
-#include <drivers/drv_sensor.h>
-#include <nuttx/spi/spi.h>
+#include "ASM330LHH.hpp"
 
-constexpr px4_spi_bus_t px4_spi_buses[SPI_BUS_MAX_BUS_ITEMS] = {
-	initSPIBus(SPI::Bus::SPI1, {
-		/* (IMU) IIM-42653, CS:PJ3 */
-		initSPIDevice(DRV_IMU_DEVTYPE_IIM42653, SPI::CS{GPIO::PortJ, GPIO::Pin3}),
-		/* (FRAM) FM25V02A-DGTR, CS:PK5 */
-		initSPIDevice(SPIDEV_FLASH(0), SPI::CS{GPIO::PortK, GPIO::Pin5}),
-	}, {GPIO::PortJ, GPIO::Pin2}),
+#include <px4_platform_common/getopt.h>
+#include <px4_platform_common/module.h>
 
-	initSPIBus(SPI::Bus::SPI2, {
-		/* (IMU) ICM-45686, CS:PI4 */
-		initSPIDevice(DRV_IMU_DEVTYPE_ICM45686, SPI::CS{GPIO::PortI, GPIO::Pin4}),
-		/* (Baro) BMP390, CS:PB10 */
-		initSPIDevice(DRV_BARO_DEVTYPE_BMP390, SPI::CS{GPIO::PortB, GPIO::Pin10}),
-	}, {GPIO::PortJ, GPIO::Pin2}),
+void ASM330LHH::print_usage()
+{
+	PRINT_MODULE_USAGE_NAME("asm330lhh", "driver");
+	PRINT_MODULE_USAGE_SUBCATEGORY("imu");
+	PRINT_MODULE_USAGE_COMMAND("start");
+	PRINT_MODULE_USAGE_PARAMS_I2C_SPI_DRIVER(false, true);
+	PRINT_MODULE_USAGE_PARAM_INT('R', 0, 0, 35, "Rotation", true);
+	PRINT_MODULE_USAGE_DEFAULT_COMMANDS();
+}
 
-	initSPIBus(SPI::Bus::SPI3, {
-		/* (IMU) ASM330LHH, CS:PI10 */
-		initSPIDevice(DRV_IMU_DEVTYPE_ASM330LHH, SPI::CS{GPIO::PortI, GPIO::Pin10}),
-	}, {GPIO::PortJ, GPIO::Pin2}),
+extern "C" int asm330lhh_main(int argc, char *argv[])
+{
+	int ch;
+	using ThisDriver = ASM330LHH;
+	BusCLIArguments cli{false, true};
+	cli.default_spi_frequency = SPI_SPEED;
 
-	initSPIBus(SPI::Bus::SPI4, {
-		/* (Baro) BMP390, CS:PH15 */
-		initSPIDevice(DRV_BARO_DEVTYPE_BMP390, SPI::CS{GPIO::PortH, GPIO::Pin15}),
-		/* (EEPROM) AT25512-TH-T, CS:PG6 */
-		initSPIDevice(SPIDEV_FLASH(1), SPI::CS{GPIO::PortG, GPIO::Pin6}),
-	}, {GPIO::PortJ, GPIO::Pin2}),
+	while ((ch = cli.getOpt(argc, argv, "R:")) != EOF) {
+		switch (ch) {
+		case 'R':
+			cli.rotation = (enum Rotation)atoi(cli.optArg());
+			break;
+		}
+	}
 
-	initSPIBusExternal(SPI::Bus::SPI5, {
-		/* External, CS:PE2 */
-		initSPIConfigExternal(SPI::CS{GPIO::PortE, GPIO::Pin2}),
-	}),
-};
+	const char *verb = cli.optArg();
 
-static constexpr bool unused = validateSPIConfig(px4_spi_buses);
+	if (!verb) {
+		ThisDriver::print_usage();
+		return -1;
+	}
+
+	BusInstanceIterator iterator(MODULE_NAME, cli, DRV_IMU_DEVTYPE_ASM330LHH);
+
+	if (!strcmp(verb, "start")) {
+		return ThisDriver::module_start(cli, iterator);
+	}
+
+	if (!strcmp(verb, "stop")) {
+		return ThisDriver::module_stop(iterator);
+	}
+
+	if (!strcmp(verb, "status")) {
+		return ThisDriver::module_status(iterator);
+	}
+
+	ThisDriver::print_usage();
+	return -1;
+}
