@@ -93,7 +93,7 @@ extern "C" int bmp388_main(int argc, char *argv[])
 	BusCLIArguments cli{true, true};
 	cli.i2c_address = 0x76;
 	cli.default_i2c_frequency = 100 * 1000;
-	cli.default_spi_frequency = 8 * 1000 * 1000;
+	cli.default_spi_frequency = 10 * 1000 * 1000;
 
 	uint16_t dev_type_driver = DRV_BARO_DEVTYPE_BMP388;
 
@@ -104,6 +104,7 @@ extern "C" int bmp388_main(int argc, char *argv[])
 
 				if (val == 388) {
 					dev_type_driver = DRV_BARO_DEVTYPE_BMP388;
+
 				} else if (val == 390) {
 					dev_type_driver = DRV_BARO_DEVTYPE_BMP390;
 				}

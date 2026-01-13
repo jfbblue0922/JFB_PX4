@@ -60,13 +60,6 @@ static constexpr uint8_t DIR_READ = 0x80;
 
 static constexpr uint8_t WHO_AM_I_ID = 0x6B;    // Who I am ID
 
-#if 0
-// static constexpr uint32_t LA_ODR = 3333;    // Linear acceleration output data rate
-// static constexpr uint32_t G_ODR  = 3333;    // Angular rate output data rate
-static constexpr uint32_t LA_ODR = 833;    // Linear acceleration output data rate
-static constexpr uint32_t G_ODR  = 833;    // Angular rate output data rate
-#endif
-
 enum class Register : uint8_t {
 	FIFO_CTRL1          = 0x07,
 	FIFO_CTRL2          = 0x08,
@@ -101,84 +94,66 @@ enum class Register : uint8_t {
 	FIFO_DATA_OUT_Z_H   = 0x7E, // FIFO data output Z(H).
 };
 
+// FIFO_CTRL3
+enum FIFO_CTRL3_BIT : uint8_t {
+	// BDR_GY[3:0]
+	BRD_GY_3333HZ   = Bit7 | Bit4,  // Batch Data Rate Gyroscope Data : 3333Hz
+	// BDR_GY[3:0]
+	BRD_XL_3333HZ   = Bit3 | Bit0,  // Batch Data Rate Accelerometer Data : 3333Hz
+};
+
+// FIFO_CTRL4
+enum FIFO_CTRL4_BIT : uint8_t {
+	// FIFO_MODE[2:0]
+	FIFO_MODE_CONTINUOUS_MODE   = Bit2 | Bit1,  // FIFO Mode : Continuous Mode
+};
+
+// CTRL1_XL
+enum CTRL1_XL_BIT : uint8_t {
+	// ODR_G[3:0]
+	ODR_XL_3333HZ   = Bit7 | Bit4,  // Accelerometer ODR : 3333Hz
+	// FS[3:0]
+	FS_XL_16G       = Bit2,  // Accelerometer Full-Scale : 16g
+};
+
+// CTRL2_G
+enum CTRL2_G_BIT : uint8_t {
+	// ODR_G[3:0]
+	ODR_G_3333HZ    = Bit7 | Bit4,  // Gyroscope ODR : 3333Hz
+	// FS_G[3:0]
+	FS_G_2000DPS    = Bit3 | Bit2,  // Gyroscope Chain Full-Scale : 2000dps
+};
+
 // CTRL3_C
 enum CTRL3_C_BIT : uint8_t {
-	BDU        = Bit6, // Block data update
-
-	IF_ADD_INC = Bit2, // Register address automatically incremented
-
-	SW_RESET   = Bit0, // Software reset
+	// BDU
+	BDU_EN          = Bit6, // Block Data Update Enable
+	// IF_INC
+	IF_INC_EN       = Bit2, // Register Address Automatically Incremented Enable
+	// SW_RESET
+	SW_RESET_EN     = Bit0, // Software Reset Enbale
 };
 
 // CTRL4_C
 enum CTRL4_C_BIT : uint8_t {
-	I2C_DISABLE = Bit2,
+	// I2C_disable
+	I2C_DISABLE_EN  = Bit2, // I2C Interfaces Disbled
+};
+
+// CTRL9_XL
+enum CTRL9_XL_BIT : uint8_t {
+	// DEN_X
+	DEN_X_STORED    = Bit7, // DEN stored in X-axis LSB
+	// DEN_Y
+	DEN_Y_STORED    = Bit6, // DEN stored in Y-axis LSB
+	// DEN_Z
+	DEN_Z_STORED    = Bit5, // DEN stored in Z-axis LSB
 };
 
 // FIFO_STATUS2
 enum FIFO_STATUS2_BIT : uint8_t {
-	OVRN = Bit6, // FIFO overrun status.
+	FIFO_OVR_IA     = Bit6, // FIFO overrun status.
 };
-
-#if 0
-// CTRL_REG1_G
-enum CTRL_REG1_G_BIT : uint8_t {
-	// ODR_G [2:0]
-	ODR_G_952HZ  = Bit7 | Bit6, // 952 Hz ODR
-	// FS_G [1:0]
-	FS_G_2000DPS = Bit4 | Bit3,
-	// BW_G [1:0]
-	BW_G_100Hz   = Bit1 | Bit0, // BW_G 100 Hz
-};
-
-// STATUS_REG (both STATUS_REG_A 0x17 and STATUS_REG_G 0x27)
-enum STATUS_REG_BIT : uint8_t {
-	TDA  = Bit2, // Temperature sensor new data available.
-	GDA  = Bit1, // Gyroscope new data available.
-	XLDA = Bit0, // Accelerometer new data available.
-};
-
-// CTRL_REG6_XL
-enum CTRL_REG6_XL_BIT : uint8_t {
-	// ODR_XL [2:0]
-	ODR_XL_952HZ = Bit7 | Bit6, // 952 Hz ODR
-	// FS_XL [1:0]
-	FS_XL_16     = Bit3,        // FS_XL 01: ±16 g
-};
-
-// CTRL_REG7_XL
-enum CTRL_REG7_XL_BIT : uint8_t {
-	HR  = Bit7, // High resolution mode for accelerometer enable.
-	FDS = Bit2, // Filtered data selection. 0: internal filter bypassed
-};
-
-// CTRL_REG8
-enum CTRL_REG8_BIT : uint8_t {
-	BDU        = Bit6, // Block data update
-
-	IF_ADD_INC = Bit2, // Register address automatically incremented
-
-	SW_RESET   = Bit0, // Software reset
-};
-
-// CTRL_REG9
-enum CTRL_REG9_BIT : uint8_t {
-	I2C_DISABLE = Bit2,
-	FIFO_EN     = Bit1,
-};
-
-// FIFO_CTRL
-enum FIFO_CTRL_BIT : uint8_t {
-	// FMODE [2:0]
-	FMODE_CONTINUOUS = Bit7 | Bit6, // Continuous mode. If the FIFO is full, the new sample over- writes the older sample.
-};
-
-// FIFO_SRC
-enum FIFO_SRC_BIT : uint8_t {
-	OVRN = Bit6, // FIFO overrun status.
-	FSS  = Bit5 | Bit4 | Bit3 | Bit2 | Bit1 | Bit0,
-};
-#endif
 
 namespace FIFO
 {

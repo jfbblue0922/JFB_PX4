@@ -72,7 +72,6 @@ int ASM330LHH::init()
 
 bool ASM330LHH::Reset()
 {
-PX4_WARN("Reset() ");
 	_state = STATE::RESET;
 	ScheduleClear();
 	ScheduleNow();
@@ -116,7 +115,7 @@ void ASM330LHH::RunImpl()
 	switch (_state) {
 	case STATE::RESET:
 		// PWR_MGMT_1: Device Reset
-		RegisterWrite(Register::CTRL3_C, CTRL3_C_BIT::SW_RESET);
+		RegisterWrite(Register::CTRL3_C, CTRL3_C_BIT::SW_RESET_EN);
 		_reset_timestamp = now;
 		_failure_count = 0;
 		_state = STATE::WAIT_FOR_RESET;
@@ -127,7 +126,7 @@ void ASM330LHH::RunImpl()
 		if ((RegisterRead(Register::WHO_AM_I) == WHO_AM_I_ID)) {
 
 			// Disable I2C, wakeup, and reset digital signal path
-			RegisterWrite(Register::CTRL4_C, CTRL4_C_BIT::I2C_DISABLE); // set immediately to prevent switching into I2C mode
+			RegisterWrite(Register::CTRL4_C, CTRL4_C_BIT::I2C_DISABLE_EN); // set immediately to prevent switching into I2C mode
 
 			// if reset succeeded then configure
 			_state = STATE::CONFIGURE;
@@ -179,8 +178,7 @@ void ASM330LHH::RunImpl()
 			uint16_t samples = fifo_status & 0x03FF;
 			uint8_t fifo_status2 = static_cast<uint8_t>((fifo_status & 0xFF00) >> 8);
 
-// PX4_WARN("FIFO_READ fifo_status:0x%04x", fifo_status);
-			if (fifo_status2 & FIFO_STATUS2_BIT::OVRN) {
+			if (fifo_status2 & FIFO_STATUS2_BIT::FIFO_OVR_IA) {
 				// overflow
 				FIFOReset();
 				perf_count(_fifo_overflow_perf);
@@ -189,14 +187,6 @@ void ASM330LHH::RunImpl()
 				perf_count(_fifo_empty_perf);
 
 			} else {
-#if 0
-				// tolerate minor jitter, leave sample to next iteration if behind by only 1
-				if (samples == _fifo_gyro_samples + 1) {
-					timestamp_sample -= static_cast<int>(FIFO_SAMPLE_DT);
-					samples--;
-				}
-#endif
-
 				if (samples > FIFO_MAX_SAMPLES) {
 					// not technically an overflow, but more samples than we expected or can publish
 					FIFOReset();
@@ -373,7 +363,6 @@ bool ASM330LHH::FIFORead(const hrt_abstime &timestamp_sample, uint8_t samples)
 			const int16_t out_y = combine(buffer.OUT_Y_H, buffer.OUT_Y_L);
 			const int16_t out_z = combine(buffer.OUT_Z_H, buffer.OUT_Z_L);
 
-// PX4_WARN("FIFORead() out x:%d, y:%d, z:%d,", out_x, out_y, out_z);
 			switch ((buffer.OUT_TAG & 0xF8) >> 3) {
 			case 0x01:
 				// sensor's frame is +x forward, +y left, +z up

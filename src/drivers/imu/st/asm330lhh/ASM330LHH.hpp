@@ -70,8 +70,6 @@ private:
 
 	static constexpr uint32_t LA_ODR = 3333;    // Linear acceleration output data rate
 	static constexpr uint32_t G_ODR  = 3333;    // Angular rate output data rate
-	// static constexpr uint32_t LA_ODR = 833;    // Linear acceleration output data rate
-	// static constexpr uint32_t G_ODR  = 833;    // Angular rate output data rate
 
 	// Sensor Configuration
 	static constexpr float FIFO_SAMPLE_DT{1e6f / ASM330LHH::G_ODR};
@@ -79,7 +77,7 @@ private:
 	static constexpr float ACCEL_RATE{ASM330LHH::LA_ODR}; // 3333 Hz accel
 
 	// maximum FIFO samples per transfer is limited to the size of sensor_accel_fifo/sensor_gyro_fifo
-	static constexpr int32_t FIFO_MAX_SAMPLES{math::min(math::min(FIFO::SIZE / 12, sizeof(sensor_gyro_fifo_s::x) / sizeof(sensor_gyro_fifo_s::x[0])), sizeof(sensor_accel_fifo_s::x) / sizeof(sensor_accel_fifo_s::x[0]) * (int)(GYRO_RATE / ACCEL_RATE))};
+	static constexpr int32_t FIFO_MAX_SAMPLES{math::min(math::min(FIFO::SIZE / 12, sizeof(sensor_gyro_fifo_s::x) / sizeof(sensor_gyro_fifo_s::x[0])), sizeof(sensor_accel_fifo_s::x) / sizeof(sensor_accel_fifo_s::x[0]))};
 
 	struct register_config_t {
 		Register reg;
@@ -134,21 +132,19 @@ private:
 	static constexpr uint8_t size_register_cfg{14};
 	register_config_t _register_cfg[size_register_cfg] {
 		// Register               | Set bits, Clear bits
-		{ Register::CTRL3_C,      0x44, 0x01 },
-		{ Register::CTRL4_C,      0x04, 0x00 },
+		{ Register::CTRL3_C,      CTRL3_C_BIT::BDU_EN | CTRL3_C_BIT::IF_INC_EN, CTRL3_C_BIT::SW_RESET_EN },
+		{ Register::CTRL4_C,      CTRL4_C_BIT::I2C_DISABLE_EN, 0x00 },
 		{ Register::CTRL5_C,      0x00, 0x00 },
 		{ Register::CTRL6_C,      0x00, 0x00 },
 		{ Register::CTRL10_C,     0x00, 0x00 },
 		{ Register::FIFO_CTRL1,   0x00, 0x00 },
 		{ Register::FIFO_CTRL2,   0x00, 0x00 },
-		{ Register::FIFO_CTRL3,   0x99, 0x00 },
-		{ Register::FIFO_CTRL4,   0x06, 0x00 },
-		{ Register::CTRL2_G,      0x9C, 0x00 },
-		// { Register::CTRL2_G,      0x7C, 0x00 },
+		{ Register::FIFO_CTRL3,   FIFO_CTRL3_BIT::BRD_GY_3333HZ | FIFO_CTRL3_BIT::BRD_XL_3333HZ, 0x00 },
+		{ Register::FIFO_CTRL4,   FIFO_CTRL4_BIT::FIFO_MODE_CONTINUOUS_MODE, 0x00 },
+		{ Register::CTRL2_G,      CTRL2_G_BIT::ODR_G_3333HZ | CTRL2_G_BIT::FS_G_2000DPS, 0x00 },
 		{ Register::CTRL7_G,      0x00, 0x00 },
-		{ Register::CTRL1_XL,     0x94, 0x00 },
-		// { Register::CTRL1_XL,     0x74, 0x00 },
+		{ Register::CTRL1_XL,     CTRL1_XL_BIT::ODR_XL_3333HZ | CTRL1_XL_BIT::FS_XL_16G, 0x00 },
 		{ Register::CTRL8_XL,     0x00, 0x00 },
-		{ Register::CTRL9_XL,     0xE0, 0x00 },
+		{ Register::CTRL9_XL,     CTRL9_XL_BIT::DEN_X_STORED | CTRL9_XL_BIT::DEN_Y_STORED | CTRL9_XL_BIT::DEN_Z_STORED, 0x00 },
 	};
 };
