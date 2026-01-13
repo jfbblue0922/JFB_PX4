@@ -197,6 +197,8 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 
 	board_control_spi_sensors_power(true, 0xffff);
 
+	RMII_POWER_EN(true);
+
 	/* Need hrt running before using the ADC */
 
 	px4_platform_init();

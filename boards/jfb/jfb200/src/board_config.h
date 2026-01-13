@@ -221,6 +221,10 @@
 #  warning SDIO initialization cannot be perfomed on the IDLE thread
 #endif
 
+/* Ethernet */
+#define RMII_POWER_EN(on_true)  px4_arch_gpiowrite(GPIO_ETH_RMII_POWER_EN, (on_true))
+
+
 /* This board provides a DMA pool and APIs */
 #define BOARD_DMA_ALLOC_POOL_SIZE   5120
 

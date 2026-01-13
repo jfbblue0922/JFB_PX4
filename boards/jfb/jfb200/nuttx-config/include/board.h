@@ -433,6 +433,7 @@
 // #define GPIO_SDMMC2_D1  (GPIO_SDMMC2_D1_0  | GPIO_SPEED_25MHz)  /* PB15 */
 // #define GPIO_SDMMC2_D2  (GPIO_SDMMC2_D2_2  | GPIO_SPEED_25MHz)  /* PB3  */
 // #define GPIO_SDMMC2_D3  (GPIO_SDMMC2_D3_0  | GPIO_SPEED_25MHz)  /* PB4  */
+
 #define GPIO_SDMMC2_CK   GPIO_SDMMC2_CK_1      /* PD6  */
 #define GPIO_SDMMC2_CMD  GPIO_SDMMC2_CMD_1     /* PD7  */
 //      GPIO_SDMMC2_D0   No Remap              /* PB14 */
@@ -445,14 +446,23 @@
 //      GPIO_OTGFS_DP    No Remap           /* PA12 */
 
 /* ETHER */
-#define GPIO_ETH_MDC            GPIO_ETH_MDC_0          /* PC1 */
-#define GPIO_ETH_MDIO_CLK       GPIO_ETH_MDIO_0         /* PA2 */
-#define GPIO_ETH_RMII_CRS_DV    GPIO_ETH_RMII_CRS_DV_0  /* PA7 */
-#define GPIO_ETH_RMII_REF_CLK   GPIO_ETH_RMII_REF_CLK_0 /* PA1 */
-#define GPIO_ETH_RMII_RXD0      GPIO_ETH_RMII_RXD0_0    /* PC4 */
-#define GPIO_ETH_RMII_RXD1      GPIO_ETH_RMII_RXD1_0    /* PC5 */
+// #define GPIO_ETH_MDC            GPIO_ETH_MDC_0          /* PC1 */
+// #define GPIO_ETH_MDIO           GPIO_ETH_MDIO_0         /* PA2 */
+// #define GPIO_ETH_RMII_CRS_DV    GPIO_ETH_RMII_CRS_DV_0  /* PA7 */
+// #define GPIO_ETH_RMII_REF_CLK   GPIO_ETH_RMII_REF_CLK_0 /* PA1 */
+// #define GPIO_ETH_RMII_RXD0      GPIO_ETH_RMII_RXD0_0    /* PC4 */
+// #define GPIO_ETH_RMII_RXD1      GPIO_ETH_RMII_RXD1_0    /* PC5 */
+// #define GPIO_ETH_RMII_TX_EN     GPIO_ETH_RMII_TX_EN_2   /* PG11 */
+// #define GPIO_ETH_RMII_TXD0      GPIO_ETH_RMII_TXD0_2    /* PG13 */
+// #define GPIO_ETH_RMII_TXD1      GPIO_ETH_RMII_TXD1_2    /* PG12 */
+
+// GPIO_ETH_MDC                 No Remap                /* PC1 */
+// GPIO_ETH_MDIO                No Remap                /* PA2 */
+// GPIO_ETH_RMII_CRS_DV         No Remap                /* PA7 */
+// GPIO_ETH_RMII_REF_CLK        No Remap                /* PA1 */
+// GPIO_ETH_RMII_RXD0           No Remap                /* PC4 */
+// GPIO_ETH_RMII_RXD1           No Remap                /* PC5 */
 #define GPIO_ETH_RMII_TX_EN     GPIO_ETH_RMII_TX_EN_2   /* PG11 */
 #define GPIO_ETH_RMII_TXD0      GPIO_ETH_RMII_TXD0_2    /* PG13 */
 #define GPIO_ETH_RMII_TXD1      GPIO_ETH_RMII_TXD1_2    /* PG12 */
-
 
