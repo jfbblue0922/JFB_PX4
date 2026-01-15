@@ -1,5 +1,5 @@
 {
-    "board_id": 1200,
+    "board_id": 0,
     "magic": "PX4FWv1",
     "description": "Firmware for the JFB JFB-200 board",
     "image": "",
