@@ -6,7 +6,7 @@ board_adc start
 
 #IMU
 icm45686 -R 8 -s -b 2 start
-asm330lhh -R 0 -s -b 3 start
+asm330 -R 0 -s -b 3 start
 iim42653 -R 0 -s -b 1 start
 
 unset HAVE_PM2

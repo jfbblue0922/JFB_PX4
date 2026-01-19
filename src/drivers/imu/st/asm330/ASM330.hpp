@@ -32,15 +32,15 @@
  ****************************************************************************/
 
 /**
- * @file ASM330LHH.hpp
+ * @file ASM330.hpp
  *
- * Driver for the ST ASM330LHH connected via SPI.
+ * Driver for the ST ASM330 connected via SPI.
  *
  */
 
 #pragma once
 
-#include "ST_ASM330LHH_Registers.hpp"
+#include "ST_ASM330_Registers.hpp"
 
 #include <drivers/drv_hrt.h>
 #include <lib/drivers/accelerometer/PX4Accelerometer.hpp>
@@ -50,13 +50,13 @@
 #include <lib/perf/perf_counter.h>
 #include <px4_platform_common/i2c_spi_buses.h>
 
-using namespace ST_ASM330LHH;
+using namespace ST_ASM330;
 
-class ASM330LHH : public device::SPI, public I2CSPIDriver<ASM330LHH>
+class ASM330 : public device::SPI, public I2CSPIDriver<ASM330>
 {
 public:
-	ASM330LHH(const I2CSPIDriverConfig &config);
-	~ASM330LHH() override;
+	ASM330(const I2CSPIDriverConfig &config);
+	~ASM330() override;
 
 	static void print_usage();
 
@@ -72,9 +72,9 @@ private:
 	static constexpr uint32_t G_ODR  = 3333;    // Angular rate output data rate
 
 	// Sensor Configuration
-	static constexpr float FIFO_SAMPLE_DT{1e6f / ASM330LHH::G_ODR};
-	static constexpr float GYRO_RATE{ASM330LHH::G_ODR};   // 3333 Hz gyro
-	static constexpr float ACCEL_RATE{ASM330LHH::LA_ODR}; // 3333 Hz accel
+	static constexpr float FIFO_SAMPLE_DT{1e6f / ASM330::G_ODR};
+	static constexpr float GYRO_RATE{ASM330::G_ODR};    // 3333 Hz gyro
+	static constexpr float ACCEL_RATE{ASM330::LA_ODR};  // 3333 Hz accel
 
 	// maximum FIFO samples per transfer is limited to the size of sensor_accel_fifo/sensor_gyro_fifo
 	static constexpr int32_t FIFO_MAX_SAMPLES{math::min(math::min(FIFO::SIZE / 12, sizeof(sensor_gyro_fifo_s::x) / sizeof(sensor_gyro_fifo_s::x[0])), sizeof(sensor_accel_fifo_s::x) / sizeof(sensor_accel_fifo_s::x[0]))};

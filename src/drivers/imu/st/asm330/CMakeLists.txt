@@ -32,14 +32,14 @@
 ############################################################################
 
 px4_add_module(
-	MODULE drivers__imu__st__asm330lhh
-	MAIN asm330lhh
+	MODULE drivers__imu__st__asm330
+	MAIN asm330
 	COMPILE_FLAGS
 	SRCS
-		ASM330LHH.cpp
-		ASM330LHH.hpp
-		asm330lhh_main.cpp
-		ST_ASM330LHH_Registers.hpp
+		ASM330.cpp
+		ASM330.hpp
+		asm330_main.cpp
+		ST_ASM330_Registers.hpp
 	DEPENDS
 		drivers_accelerometer
 		drivers_gyroscope

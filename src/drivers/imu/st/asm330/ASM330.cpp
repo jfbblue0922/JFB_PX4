@@ -31,7 +31,7 @@
  *
  ****************************************************************************/
 
-#include "ASM330LHH.hpp"
+#include "ASM330.hpp"
 
 using namespace time_literals;
 
@@ -40,7 +40,7 @@ static constexpr int16_t combine(uint8_t msb, uint8_t lsb)
 	return (msb << 8u) | lsb;
 }
 
-ASM330LHH::ASM330LHH(const I2CSPIDriverConfig &config) :
+ASM330::ASM330(const I2CSPIDriverConfig &config) :
 	SPI(config),
 	I2CSPIDriver(config),
 	_px4_accel(get_device_id(), config.rotation),
@@ -49,7 +49,7 @@ ASM330LHH::ASM330LHH(const I2CSPIDriverConfig &config) :
 	ConfigureSampleRate(_px4_gyro.get_max_rate_hz());
 }
 
-ASM330LHH::~ASM330LHH()
+ASM330::~ASM330()
 {
 	perf_free(_bad_register_perf);
 	perf_free(_bad_transfer_perf);
@@ -58,7 +58,7 @@ ASM330LHH::~ASM330LHH()
 	perf_free(_fifo_reset_perf);
 }
 
-int ASM330LHH::init()
+int ASM330::init()
 {
 	int ret = SPI::init();
 
@@ -70,7 +70,7 @@ int ASM330LHH::init()
 	return Reset() ? 0 : -1;
 }
 
-bool ASM330LHH::Reset()
+bool ASM330::Reset()
 {
 	_state = STATE::RESET;
 	ScheduleClear();
@@ -78,12 +78,12 @@ bool ASM330LHH::Reset()
 	return true;
 }
 
-void ASM330LHH::exit_and_cleanup()
+void ASM330::exit_and_cleanup()
 {
 	I2CSPIDriverBase::exit_and_cleanup();
 }
 
-void ASM330LHH::print_status()
+void ASM330::print_status()
 {
 	I2CSPIDriverBase::print_status();
 
@@ -96,7 +96,7 @@ void ASM330LHH::print_status()
 	perf_print_counter(_fifo_reset_perf);
 }
 
-int ASM330LHH::probe()
+int ASM330::probe()
 {
 	const uint8_t whoami = RegisterRead(Register::WHO_AM_I);
 
@@ -108,7 +108,7 @@ int ASM330LHH::probe()
 	return PX4_OK;
 }
 
-void ASM330LHH::RunImpl()
+void ASM330::RunImpl()
 {
 	const hrt_abstime now = hrt_absolute_time();
 
@@ -238,7 +238,7 @@ void ASM330LHH::RunImpl()
 	}
 }
 
-void ASM330LHH::ConfigureSampleRate(int sample_rate)
+void ASM330::ConfigureSampleRate(int sample_rate)
 {
 	// round down to nearest FIFO sample dt
 	const float min_interval = FIFO_SAMPLE_DT;
@@ -250,7 +250,7 @@ void ASM330LHH::ConfigureSampleRate(int sample_rate)
 	_fifo_empty_interval_us = _fifo_gyro_samples * (1e6f / GYRO_RATE);
 }
 
-bool ASM330LHH::Configure()
+bool ASM330::Configure()
 {
 	// first set and clear all configured register bits
 	for (const auto &reg_cfg : _register_cfg) {
@@ -277,7 +277,7 @@ bool ASM330LHH::Configure()
 	return success;
 }
 
-bool ASM330LHH::RegisterCheck(const register_config_t &reg_cfg)
+bool ASM330::RegisterCheck(const register_config_t &reg_cfg)
 {
 	bool success = true;
 
@@ -296,7 +296,7 @@ bool ASM330LHH::RegisterCheck(const register_config_t &reg_cfg)
 	return success;
 }
 
-uint8_t ASM330LHH::RegisterRead(Register reg)
+uint8_t ASM330::RegisterRead(Register reg)
 {
 	uint8_t cmd[2] {};
 	cmd[0] = static_cast<uint8_t>(reg) | DIR_READ;
@@ -304,13 +304,13 @@ uint8_t ASM330LHH::RegisterRead(Register reg)
 	return cmd[1];
 }
 
-void ASM330LHH::RegisterWrite(Register reg, uint8_t value)
+void ASM330::RegisterWrite(Register reg, uint8_t value)
 {
 	uint8_t cmd[2] { (uint8_t)reg, value };
 	transfer(cmd, cmd, sizeof(cmd));
 }
 
-void ASM330LHH::RegisterSetAndClearBits(Register reg, uint8_t setbits, uint8_t clearbits)
+void ASM330::RegisterSetAndClearBits(Register reg, uint8_t setbits, uint8_t clearbits)
 {
 	const uint8_t orig_val = RegisterRead(reg);
 
@@ -321,7 +321,7 @@ void ASM330LHH::RegisterSetAndClearBits(Register reg, uint8_t setbits, uint8_t c
 	}
 }
 
-uint16_t ASM330LHH::FIFOReadStatus()
+uint16_t ASM330::FIFOReadStatus()
 {
 	uint8_t fifo_status[3] {};
 	fifo_status[0] = static_cast<uint8_t>(Register::FIFO_STATUS1) | DIR_READ;
@@ -334,7 +334,7 @@ uint16_t ASM330LHH::FIFOReadStatus()
 	return combine(fifo_status[2], fifo_status[1]);
 }
 
-bool ASM330LHH::FIFORead(const hrt_abstime &timestamp_sample, uint8_t samples)
+bool ASM330::FIFORead(const hrt_abstime &timestamp_sample, uint8_t samples)
 {
 	sensor_gyro_fifo_s gyro{};
 	gyro.timestamp_sample = timestamp_sample;
@@ -409,7 +409,7 @@ bool ASM330LHH::FIFORead(const hrt_abstime &timestamp_sample, uint8_t samples)
 	return (accel.samples > 0) && (gyro.samples > 0);
 }
 
-void ASM330LHH::FIFOReset()
+void ASM330::FIFOReset()
 {
 	perf_count(_fifo_reset_perf);
 
@@ -423,7 +423,7 @@ void ASM330LHH::FIFOReset()
 	}
 }
 
-void ASM330LHH::UpdateTemperature()
+void ASM330::UpdateTemperature()
 {
 	// read current temperature
 	struct TransferBuffer {
