@@ -32,9 +32,9 @@
  ****************************************************************************/
 
 /**
- * @file ST_ASM330LHH_registers.hpp
+ * @file ST_ASM330_registers.hpp
  *
- * ST ASM330LHH registers.
+ * ST ASM330 registers.
  *
  */
 
@@ -52,7 +52,7 @@ static constexpr uint8_t Bit5 = (1 << 5);
 static constexpr uint8_t Bit6 = (1 << 6);
 static constexpr uint8_t Bit7 = (1 << 7);
 
-namespace ST_ASM330LHH
+namespace ST_ASM330
 {
 static constexpr uint32_t SPI_SPEED = 10 * 1000 * 1000; // 10 MHz SPI clock frequency
 

@@ -31,14 +31,14 @@
  *
  ****************************************************************************/
 
-#include "ASM330LHH.hpp"
+#include "ASM330.hpp"
 
 #include <px4_platform_common/getopt.h>
 #include <px4_platform_common/module.h>
 
-void ASM330LHH::print_usage()
+void ASM330::print_usage()
 {
-	PRINT_MODULE_USAGE_NAME("asm330lhh", "driver");
+	PRINT_MODULE_USAGE_NAME("asm330", "driver");
 	PRINT_MODULE_USAGE_SUBCATEGORY("imu");
 	PRINT_MODULE_USAGE_COMMAND("start");
 	PRINT_MODULE_USAGE_PARAMS_I2C_SPI_DRIVER(false, true);
@@ -46,10 +46,10 @@ void ASM330LHH::print_usage()
 	PRINT_MODULE_USAGE_DEFAULT_COMMANDS();
 }
 
-extern "C" int asm330lhh_main(int argc, char *argv[])
+extern "C" int asm330_main(int argc, char *argv[])
 {
 	int ch;
-	using ThisDriver = ASM330LHH;
+	using ThisDriver = ASM330;
 	BusCLIArguments cli{false, true};
 	cli.default_spi_frequency = SPI_SPEED;
 
@@ -68,7 +68,7 @@ extern "C" int asm330lhh_main(int argc, char *argv[])
 		return -1;
 	}
 
-	BusInstanceIterator iterator(MODULE_NAME, cli, DRV_IMU_DEVTYPE_ASM330LHH);
+	BusInstanceIterator iterator(MODULE_NAME, cli, DRV_IMU_DEVTYPE_ASM330);
 
 	if (!strcmp(verb, "start")) {
 		return ThisDriver::module_start(cli, iterator);
