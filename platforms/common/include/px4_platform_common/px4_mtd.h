@@ -33,6 +33,10 @@
 #pragma once
 #include <stdint.h>
 
+#include <nuttx/i2c/i2c_master.h>
+#include <nuttx/mtd/mtd.h>
+#include <nuttx/spi/spi.h>
+
 __BEGIN_DECLS
 
 #define MAX_MTD_INSTANCES 5u
@@ -81,5 +85,9 @@ int px4_at24c_initialize(FAR struct i2c_master_s *dev,
 			 uint8_t address, FAR struct mtd_dev_s **mtd_dev);
 
 void px4_at24c_deinitialize(void);
+
+int px4_at25xxx_initialize(FAR struct spi_dev_s *dev, FAR struct mtd_dev_s **mtd_dev);
+
+void px4_at25xxx_deinitialize(void);
 
 __END_DECLS
