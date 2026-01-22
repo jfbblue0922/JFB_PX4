@@ -581,7 +581,8 @@ led_off(unsigned led)
 	switch (led) {
 	case LED_ACTIVITY:
 #if defined(BOARD_PIN_LED_ACTIVITY)
-		px4_arch_gpiowrite(BOARD_PIN_LED_ACTIVITY, BOARD_LED_OFF);
+		// px4_arch_gpiowrite(BOARD_PIN_LED_ACTIVITY, BOARD_LED_OFF);
+		px4_arch_gpiowrite(BOARD_PIN_LED_ACTIVITY, BOARD_LED_ON);
 #endif
 		break;
 
