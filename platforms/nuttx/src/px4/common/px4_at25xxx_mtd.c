@@ -20,6 +20,29 @@
  *
  ************************************************************************************/
 
+/* Max SPI speed is :
+ * 20 MHz for Atmel devices (>4.5V)
+ * 10 MHz for Atmel devices (>2.5V)
+ *
+ * All devices have the same instruction set.
+ *
+ * The following devices should be supported:
+ *
+ * Manufacturer Device     Bytes PgSize AddrLen
+ * Atmel
+ *              AT25010B     128      8    8bit
+ *              AT25020B     256      8    8bit
+ *              AT25040B     512      8    9bit
+ *              AT25080B    1024     32   16bit
+ *              AT25160B    2048     32   16bit
+ *              AT25320B    4096     32   16bit
+ *              AT25640B    8192     32   16bit
+ *              AT25128B   16384     64   16bit
+ *              AT25256B   32768     64   16bit
+ *              AT25512    65536    128   16bit  --> TESTED
+ *              AT25M01   131072    256   24bit
+ */
+
 /************************************************************************************
  * Included Files
  ************************************************************************************/
@@ -47,6 +70,11 @@
 #include <board_config.h>
 
 // #define PX4_AT25XXX_MTD_DEBUG   /* for debug */
+
+#define AT25XXX_ATTEMPT_CHECK   /* for attempt to validate device is present */
+
+#define STR(x) #x
+#define VALUE(x) STR(x)
 
 /************************************************************************************
  * Pre-processor Definitions
@@ -77,8 +105,62 @@
 
 #define AT25XXX_DUMMY   0xFF
 
-
 #define AT25XXX_INIT_CLK_MAX    10000000UL
+
+/* Get the part configuration based on the size configuration */
+
+#ifndef CONFIG_AT25XXX_SIZE_KBIT
+#  define CONFIG_AT25XXX_SIZE_KBIT 512
+#endif
+
+#if CONFIG_AT25XXX_SIZE_KBIT == 1       /* AT25010B:    1Kbits =    128B;   8 * 16 =  128 */
+#  define AT25XXX_PAGESIZE      8
+#  define AT25XXX_NPAGES        16
+#  define AT25XXX_ADDRLEN_BIT   8
+#elif CONFIG_AT25XXX_SIZE_KBIT == 2     /* AT25020B:    2Kbits =    256B;   8 * 32 = 256 */
+#  define AT25XXX_PAGESIZE      8
+#  define AT25XXX_NPAGES        32
+#  define AT25XXX_ADDRLEN_BIT   8
+#elif CONFIG_AT25XXX_SIZE_KBIT == 4     /* AT25040B:    4Kbits =    512B; 8 * 64 = 256 */
+#  define AT25XXX_PAGESIZE      8
+#  define AT25XXX_NPAGES        64
+#  define AT25XXX_ADDRLEN_BIT   9
+#elif CONFIG_AT25XXX_SIZE_KBIT == 8     /* AT25080B:    8Kbits =   1024B; 32 * 32 = 1024 */
+#  define AT25XXX_PAGESIZE      32
+#  define AT25XXX_NPAGES        32
+#  define AT25XXX_ADDRLEN_BIT   16
+#elif CONFIG_AT25XXX_SIZE_KBIT == 16    /* AT25160B:   16Kbits =   2048B; 32 * 64 = 2048 */
+#  define AT25XXX_PAGESIZE      32
+#  define AT25XXX_NPAGES        64
+#  define AT25XXX_ADDRLEN_BIT   16
+#elif CONFIG_AT25XXX_SIZE_KBIT == 32    /* AT25320B:   32Kbits =   4096B; 32 * 128 = 4096 */
+#  define AT25XXX_PAGESIZE      32
+#  define AT25XXX_NPAGES        128
+#  define AT25XXX_ADDRLEN_BIT   16
+#elif CONFIG_AT25XXX_SIZE_KBIT == 64    /* AT25640B:   64Kbits =   8192B; 32 * 256 = 8192 */
+#  define AT25XXX_PAGESIZE      32
+#  define AT25XXX_NPAGES        256
+#  define AT25XXX_ADDRLEN_BIT   16
+#elif CONFIG_AT25XXX_SIZE_KBIT == 128   /* AT25128B:  128Kbits =  16384B; 64 * 256 = 16384 */
+#  define AT25XXX_PAGESIZE      64
+#  define AT25XXX_NPAGES        256
+#  define AT25XXX_ADDRLEN_BIT   16
+#elif CONFIG_AT25XXX_SIZE_KBIT == 256   /* AT25256B:  256Kbits =  32768B; 64 * 512 = 32768 */
+#  define AT25XXX_PAGESIZE      64
+#  define AT25XXX_NPAGES        512
+#  define AT25XXX_ADDRLEN_BIT   16
+#elif CONFIG_AT25XXX_SIZE_KBIT == 512   /*  AT25512:  512Kbits =  65536B; 128 * 512 = 65536 */
+#  define AT25XXX_PAGESIZE      128
+#  define AT25XXX_NPAGES        512
+#  define AT25XXX_ADDRLEN_BIT   16
+#elif CONFIG_AT25XXX_SIZE_KBIT == 1024  /*  AT25M01: 1024Kbits = 131072B; 256 * 512 = 131072 */
+#  define AT25XXX_PAGESIZE      256
+#  define AT25XXX_NPAGES        512
+#  define AT25XXX_ADDRLEN_BIT   24
+#else
+#  pragma message "CONFIG_AT25XXX_SIZE_KBIT is " VALUE(CONFIG_AT25XXX_SIZE_KBIT)
+#  error "Unsupported CONFIG_AT25XXX_SIZE_KBIT."
+#endif
 
 /************************************************************************************
  * Private Types
@@ -110,6 +192,7 @@ static inline void at25xxx_waitwritecomplete(struct at25xxx_dev_s *priv);
 static inline void at25xxx_writeenable(struct at25xxx_dev_s *priv);
 static inline int at25xxx_pagewrite(struct at25xxx_dev_s *priv, FAR const uint8_t *buffer,
 									off_t page, size_t pagesize);
+static inline int at25xxx_check_present(struct at25xxx_dev_s *priv);
 
 /* MTD driver methods */
 
@@ -316,6 +399,87 @@ static inline int at25xxx_pagewrite(struct at25xxx_dev_s *priv, FAR const uint8_
 	at25xxx_waitwritecomplete(priv);
 
 	finfo("Written\n");
+
+	return OK;
+}
+
+/****************************************************************************
+ * Name:  at25xxx_check_present
+ ****************************************************************************/
+
+static inline int at25xxx_check_present(struct at25xxx_dev_s *priv)
+{
+#if 0
+	/* Send "Write Enable (WREN)" command */
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), true);
+
+	SPI_SEND(priv->dev, AT25XXX_WREN);
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), false);
+
+	/* Send "Read Status Register (RDSR)" command */
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), true);
+
+	SPI_SEND(priv->dev, AT25XXX_RDSR);
+
+	/* Send a dummy byte to generate the clock needed to shift out the
+	 * status
+	 */
+
+	uint8_t status = SPI_SEND(priv->dev, AT25XXX_DUMMY);
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), false);
+
+	if ((status & AT25XXX_SR_WEL) == 0x00) {
+		return -ENODEV;
+	}
+
+	/* Send "Write Disable (WRDI)" command */
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), true);
+
+	SPI_SEND(priv->dev, AT25XXX_WRDI);
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), false);
+
+	/* Send "Read Status Register (RDSR)" command */
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), true);
+
+	SPI_SEND(priv->dev, AT25XXX_RDSR);
+
+	/* Send a dummy byte to generate the clock needed to shift out the
+	 * status
+	 */
+
+	status = SPI_SEND(priv->dev, AT25XXX_DUMMY);
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), false);
+
+	if ((status & AT25XXX_SR_WEL) != 0x00) {
+		return -ENODEV;
+	}
+#else
+	/* Send "Read Status Register (RDSR)" command */
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), true);
+
+	SPI_SEND(priv->dev, AT25XXX_RDSR);
+
+	/* Send a dummy byte to generate the clock needed to shift out the
+	 * status
+	 */
+
+	uint8_t status = SPI_SEND(priv->dev, AT25XXX_DUMMY);
+
+	SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), false);
+
+	if (status  != 0x00) {
+		return -ENODEV;
+	}
+#endif
 
 	return OK;
 }
@@ -533,74 +697,28 @@ int px4_at25xxx_initialize(FAR struct spi_dev_s *dev, FAR struct mtd_dev_s **mtd
 		priv->mtd.name   = "at25xxx";
 		priv->dev        = dev;
 
-		priv->size       = 64L * 1024L;
-		priv->pgsize     = 128;
-		priv->addrlen    = 16;
-		priv->speed      = 10000000;
+		priv->size       = AT25XXX_PAGESIZE * AT25XXX_NPAGES;
+		priv->pgsize     = AT25XXX_PAGESIZE;
+		priv->addrlen    = AT25XXX_ADDRLEN_BIT;
+		priv->speed      = AT25XXX_INIT_CLK_MAX;
 
 		/* Deselect the FLASH */
 
-		SPI_SELECT(dev, SPIDEV_EEPROM(0), false);
+		SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), false);
 
-		/* attempt to read to validate device is present */
+#ifdef AT25XXX_ATTEMPT_CHECK
+		/* Attempt to write and read to validate device is present */
 
 		at25xxx_lock(priv);
 
-		/* Send "Write Enable (WREN)" command */
-
-		SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), true);
-
-		SPI_SEND(priv->dev, AT25XXX_WREN);
-
-		SPI_SELECT(dev, SPIDEV_EEPROM(0), false);
-
-		/* Send "Read Status Register (RDSR)" command */
-
-		SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), true);
-
-		SPI_SEND(priv->dev, AT25XXX_RDSR);
-
-		/* Send a dummy byte to generate the clock needed to shift out the
-		 * status
-		 */
-
-		uint8_t status = SPI_SEND(priv->dev, AT25XXX_DUMMY);
-
-		SPI_SELECT(dev, SPIDEV_EEPROM(0), false);
-
-		if ((status & AT25XXX_SR_WEL) == 0x00) {
-			at25xxx_unlock(priv);
-			return -ENODEV;
-		}
-
-		/* Send "Write Disable (WRDI)" command */
-
-		SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), true);
-
-		SPI_SEND(priv->dev, AT25XXX_WRDI);
-
-		SPI_SELECT(dev, SPIDEV_EEPROM(0), false);
-
-		/* Send "Read Status Register (RDSR)" command */
-
-		SPI_SELECT(priv->dev, SPIDEV_EEPROM(0), true);
-
-		SPI_SEND(priv->dev, AT25XXX_RDSR);
-
-		/* Send a dummy byte to generate the clock needed to shift out the
-		 * status
-		 */
-
-		status = SPI_SEND(priv->dev, AT25XXX_DUMMY);
-
-		SPI_SELECT(dev, SPIDEV_EEPROM(0), false);
-
-		if ((status & AT25XXX_SR_WEL) != 0x00) {
-			at25xxx_unlock(priv);
-			return -ENODEV;
-		}
+		int ret = at25xxx_check_present(priv);
 
 		at25xxx_unlock(priv);
+
+		if (ret < 0) {
+			return ret;
+		}
+#endif
 	}
 
 	else {
@@ -628,19 +746,19 @@ static void debug_at25xxx_test(void)
 	unsigned count = 0;
 	unsigned errors = 0;
 
-	for (count = 0; count < 10; count++) {
+	for (count = 0; count < 5; count++) {
 
 		memset(buf, count, sizeof(buf));
 		ssize_t result = at25xxx_bwrite(&g_at25xxx[0].mtd, 1, 1, buf);
 
 		if (result == ERROR) {
 			if (errors++ > 2) {
-				syslog(LOG_INFO, "too many errors\n");
+				syslog(LOG_INFO, "[at25xx Debug] too many errors\n");
 				return;
 			}
 
 		} else if (result != 1) {
-			syslog(LOG_INFO, "unexpected %zu\n", result);
+			syslog(LOG_INFO, "[at25xx Debug] unexpected %zu\n", result);
 		}
 
 		memset(buf, 0x55, sizeof(buf));
@@ -648,19 +766,19 @@ static void debug_at25xxx_test(void)
 
 		if (result == ERROR) {
 			if (errors++ > 2) {
-				syslog(LOG_INFO, "too many errors\n");
+				syslog(LOG_INFO, "[at25xx Debug] too many errors\n");
 				return;
 			}
 
 		} else if (result != 1) {
-			syslog(LOG_INFO, "unexpected %zu\n", result);
+			syslog(LOG_INFO, "[at25xx Debug] unexpected %zu\n", result);
 
 		} else {
-			syslog(LOG_INFO, "Read Test 0x%x \n", buf[0]);
+			syslog(LOG_INFO, "[at25xx Debug] Read Test 0x%x \n", buf[0]);
 		}
 	}
 
-	syslog(LOG_INFO, "test %u errors %u\n", count, errors);
+	syslog(LOG_INFO, "[at25xx Debug] test %u errors %u\n", count, errors);
 }
 
 #endif /* of #ifdef PX4_AT25XXX_MTD_DEBUG */
