@@ -144,14 +144,13 @@
 #define GPIO_SAFETY_LEDn            /* PD10 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_SET | GPIO_PORTD | GPIO_PIN10)
 #define GPIO_PWM_OEn                /* PK2  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_SET | GPIO_PORTK | GPIO_PIN2)
 #define GPIO_PWM_VOLTAGE_SEL_5V_3Vn /* PJ6  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTJ | GPIO_PIN6)
-#define GPIO_TERMCAN1_EN            /* PG7  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_SET | GPIO_PORTG | GPIO_PIN7)
-#define GPIO_TERMCAN2_EN            /* PG8  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_SET | GPIO_PORTG | GPIO_PIN8)
-#define GPIO_HEATER_OUTPUT          /* PI12 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTI | GPIO_PIN12)
+#define GPIO_IMU_TEMP_CTRL          /* PI12 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTI | GPIO_PIN12)
+#define GPIO_HEATER_CEn             /* PI13 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTI | GPIO_PIN13)
 #define GPIO_nARMED                 /* PF2  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTF | GPIO_PIN2)
 
 #define GPIO_FMU_CAP1               /* PE11 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTE | GPIO_PIN11)
-#define GPIO_FMU_CAP2               /* PB11 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTB | GPIO_PIN11)
-#define GPIO_SAFETY_SWITCH_IN       /* PG9  */  (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTG | GPIO_PIN9)
+#define GPIO_FMU_CAP2               /* PI9  */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTI | GPIO_PIN9)
+#define GPIO_SAFETY_SWITCH_IN       /* PG15 */  (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTG | GPIO_PIN15)
 #define GPIO_SD_CARD_IN             /* PC13 */  (GPIO_INPUT | GPIO_PORTC | GPIO_PIN13)
 
 /* Define True logic Power Control in arch agnostic form */
@@ -166,7 +165,7 @@
  * this board support the ADC system_power interface, and therefore
  * provides the true logic GPIO BOARD_ADC_xxxx macros.
  */
-#define BOARD_ADC_USB_CONNECTED     (px4_arch_gpioread(GPIO_VBUS_RESERVED))             /* PA9  */
+#define BOARD_ADC_USB_CONNECTED     (px4_arch_gpioread(GPIO_VBUS_RESERVED))             /* PA10 */
 #define BOARD_ADC_USB_VALID         (!px4_arch_gpioread(GPIO_VDD_BRICK3_VALIDn))        /* PG3  */
 #define BOARD_ADC_BRICK1_VALID      (!px4_arch_gpioread(GPIO_VDD_BRICK1_VALIDn))        /* PG1  */
 #define BOARD_ADC_BRICK2_VALID      (!px4_arch_gpioread(GPIO_VDD_BRICK2_VALIDn))        /* PG2  */
@@ -177,6 +176,8 @@
 /* Enable the FMU to use the switch it if there is no px4io fixme:This should be BOARD_SAFTY_BUTTON() */
 #define GPIO_BTN_SAFETY             GPIO_SAFETY_SWITCH_IN   /* Enable the FMU to control it if there is no px4io */
 
+#define GPIO_LED_SAFETY             GPIO_SAFETY_LEDn
+
 /* BUFFER */
 #define BUFFER_OE_EN(on_true)       px4_arch_gpiowrite(GPIO_PWM_OEn, (on_true))
 
@@ -184,6 +185,7 @@
 #define ARMED_EN(on_true)           px4_arch_gpiowrite(GPIO_nARMED, (on_true))
 
 /* HEATER */
+#define GPIO_HEATER_OUTPUT          GPIO_IMU_TEMP_CTRL
 #define HEATER_OUTPUT_EN(on_true)   px4_arch_gpiowrite(GPIO_HEATER_OUTPUT, (on_true))
 
 /* Tone alarm output */
@@ -200,7 +202,7 @@
 /* USB
  *  OTG FS: PA9  OTG_FS_VBUS VBUS sensing
  */
-#define GPIO_OTGFS_VBUS         GPIO_VBUS_RESERVED  /* PA9 */
+#define GPIO_OTGFS_VBUS         GPIO_VBUS_RESERVED  /* PA10 */
 
 /* High-resolution timer */
 #define HRT_TIMER               5   /* use timer5 for the HRT */
@@ -268,10 +270,6 @@
 		PX4_MAKE_GPIO_OUTPUT_CLEAR(GPIO_I2C4_SCL),  \
 		PX4_MAKE_GPIO_OUTPUT_CLEAR(GPIO_I2C4_SDA),  \
 		/* GPIO */                      \
-		GPIO_FMU_CAP1,                  \
-		GPIO_FMU_CAP2,                  \
-		GPIO_SAFETY_SWITCH_IN,          \
-		GPIO_SD_CARD_IN,                \
 		GPIO_BUZZER_1,                  \
 		GPIO_WDOG,                      \
 		GPIO_CAN_OEn,                   \
@@ -279,10 +277,13 @@
 		GPIO_SAFETY_LEDn,               \
 		GPIO_PWM_OEn,                   \
 		GPIO_PWM_VOLTAGE_SEL_5V_3Vn,    \
-		GPIO_TERMCAN1_EN,               \
-		GPIO_TERMCAN2_EN,               \
-		GPIO_HEATER_OUTPUT,             \
+		GPIO_IMU_TEMP_CTRL,             \
+		GPIO_HEATER_CEn,                \
 		GPIO_nARMED,                    \
+		GPIO_FMU_CAP1,                  \
+		GPIO_FMU_CAP2,                  \
+		GPIO_SAFETY_SWITCH_IN,          \
+		GPIO_SD_CARD_IN,                \
 	}
 
 __BEGIN_DECLS

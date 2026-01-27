@@ -53,6 +53,7 @@ constexpr px4_spi_bus_t px4_spi_buses[SPI_BUS_MAX_BUS_ITEMS] = {
 	initSPIBus(SPI::Bus::SPI3, {
 		/* (IMU) ASM330LHH, CS:PI10 */
 		initSPIDevice(DRV_IMU_DEVTYPE_ASM330, SPI::CS{GPIO::PortI, GPIO::Pin10}),
+		/* No Device, CS:PB11 */
 	}, {GPIO::PortJ, GPIO::Pin2}),
 
 	initSPIBus(SPI::Bus::SPI4, {

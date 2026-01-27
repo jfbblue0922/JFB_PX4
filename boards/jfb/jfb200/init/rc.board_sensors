@@ -21,3 +21,7 @@ bmm350 -I -R 0 start
 ist8310 -I -R 8 start
 # External compass
 ist8310 -X -b 1 -R 10 start
+
+#Heater
+heater stop
+
