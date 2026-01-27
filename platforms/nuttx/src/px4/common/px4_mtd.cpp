@@ -174,6 +174,71 @@ static int at24xxx_attach(mtd_instance_s &instance)
 #endif
 }
 
+static int at25xxx_attach(mtd_instance_s &instance)
+{
+#if !defined(PX4_SPI_BUS_MTD_AT25XXX)
+	PX4_ERR("Misconfiguration PX4_SPI_BUS_MTD_AT25XXX not set");
+	return ENXIO;
+#else
+
+	/* start the AT25XXX driver */
+
+	// 10[MHz]の場合、px4_at25xxx_initialize時と周期タスク時のNETMAN updateでは読み書きできるのに、
+	// 起動時におけるNETMANのipcfg_readで正常に読み出せない。
+	// そのため、暫定対応としてSPI周波数を落とす。
+	// ⇒ SPI周波数を落とすと正常に読み出せる。。。
+	int spi_speed_mhz;
+
+	for (spi_speed_mhz = 8; spi_speed_mhz > 0; spi_speed_mhz--) {
+		/* initialize the right spi */
+		struct spi_dev_s *spi = px4_spibus_initialize(px4_find_spi_bus(instance.devid));
+
+		if (spi == nullptr) {
+			PX4_ERR("failed to locate spi bus");
+			return -ENXIO;
+		}
+
+		/* this resets the spi bus, set correct bus speed again */
+		SPI_LOCK(spi, true);
+		SPI_SETFREQUENCY(spi, spi_speed_mhz * 1000 * 1000);
+		SPI_SETBITS(spi, 8);
+		SPI_SETMODE(spi, SPIDEV_MODE0);
+		SPI_SELECT(spi, instance.devid, false);
+		SPI_LOCK(spi, false);
+
+		int ret_val = px4_at25xxx_initialize(spi, &(instance.mtd_dev));
+
+		if (ret_val == 0) {
+			/* abort on first valid result */
+			if (spi_speed_mhz != 8) {
+				PX4_WARN("mtd needed %d attempts to attach", 8 + 1 - spi_speed_mhz);
+			}
+
+			break;
+		}
+
+		/* try reducing speed for next attempt */
+		px4_usleep(10000);
+	}
+
+	/* if last attempt is still unsuccessful, abort */
+	if (instance.mtd_dev == nullptr) {
+		PX4_ERR("failed to initialize mtd driver");
+		return -EIO;
+	}
+
+	int ret = instance.mtd_dev->ioctl(instance.mtd_dev, MTDIOC_SETSPEED, (unsigned long)spi_speed_mhz * 1000 * 1000);
+
+	if (ret != OK) {
+		// FIXME: From the previous warning call, it looked like this should have been fatal error instead. Tried
+		// that but setting the bus speed does fail all the time. Which was then exiting and the board would
+		// not run correctly. So changed to PX4_WARN.
+		PX4_WARN("failed to set bus speed");
+	}
+
+	return 0;
+#endif
+}
 
 int px4_mtd_get_geometry(const mtd_instance_s *instance, unsigned long *blocksize, unsigned long *erasesize,
 			 unsigned long *neraseblocks,
@@ -361,6 +426,9 @@ memoryout:
 		} else if (mtd_list->entries[num_entry]->device->bus_type == px4_mft_device_t::ONCHIP) {
 			instances[i]->n_partitions_current++;
 			return 0;
+		} else if (mtd_list->entries[num_entry]->device->bus_type == px4_mft_device_t::SPI_EEPROM) {
+			rv = at25xxx_attach(*instances[i]);
+
 		}
 
 		if (rv != 0) {

@@ -235,6 +235,8 @@
 
 #define BOARD_ENABLE_CONSOLE_BUFFER
 
+#define PX4_SPI_BUS_MTD_AT25XXX
+
 #define PX4_GPIO_INIT_LIST { \
 		PX4_ADC_GPIO,                     \
 		GPIO_CAN1_TX,                     \

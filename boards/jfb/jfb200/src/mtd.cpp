@@ -36,15 +36,20 @@
 
 #include <nuttx/spi/spi.h>
 #include <px4_platform_common/px4_manifest.h>
-//                                                              KiB BS    nB
+//                                                                     KiB BS    nB
 static const px4_mft_device_t spi1 = {             // FM25V02A on FMUM 32K 512 X 64
 	.bus_type = px4_mft_device_t::SPI,
 	.devid    = SPIDEV_FLASH(0)
 };
 
+static const px4_mft_device_t spi4 = {             // AT25512  on Base 64K 128 X 256
+	.bus_type = px4_mft_device_t::SPI_EEPROM,
+	.devid    = SPIDEV_EEPROM(0)
+};
+
 static const px4_mtd_entry_t fmum_fram = {
 	.device = &spi1,
-	.npart = 3,
+	.npart = 2,
 	.partd = {
 		{
 			.type = MTD_PARAMETERS,
@@ -54,20 +59,28 @@ static const px4_mtd_entry_t fmum_fram = {
 		{
 			.type = MTD_WAYPOINTS,
 			.path = "/fs/mtd_waypoints",
-			.nblocks = 31
+			.nblocks = 32
 		},
+	},
+};
+
+static const px4_mtd_entry_t base_eeprom = {
+	.device = &spi4,
+	.npart = 1,
+	.partd = {
 		{
 			.type = MTD_NET,
 			.path = "/fs/mtd_net",
-			.nblocks = 1 // 512 = 512 * 1
+			.nblocks = 2 // 256 = 128 * 2
 		}
 	},
 };
 
 static const px4_mtd_manifest_t board_mtd_config = {
-	.nconfigs   = 1,
+	.nconfigs   = 2,
 	.entries = {
 		&fmum_fram,
+		&base_eeprom,
 	}
 };
 

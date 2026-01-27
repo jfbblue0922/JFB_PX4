@@ -55,6 +55,7 @@ else()
 		init.c
 		iwdg.c
 		led.c
+		mtd.cpp
 		sdio.c
 		spi.cpp
 		timer_config.cpp
