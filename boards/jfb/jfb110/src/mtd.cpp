@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (C) 2020, 2022 PX4 Development Team. All rights reserved.
+ *   Copyright (C) 2026 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,35 +31,72 @@
  *
  ****************************************************************************/
 
-#include <px4_arch/spi_hw_description.h>
-#include <drivers/drv_sensor.h>
+#include <nuttx/config.h>
+#include <board_config.h>
+
 #include <nuttx/spi/spi.h>
-
-constexpr px4_spi_bus_t px4_spi_buses[SPI_BUS_MAX_BUS_ITEMS] = {
-	initSPIBus(SPI::Bus::SPI1, {
-    		initSPIDevice(DRV_GYR_DEVTYPE_SCHA63T, SPI::CS{GPIO::PortH, GPIO::Pin4}),
-	    	initSPIDevice(DRV_ACC_DEVTYPE_SCHA63T, SPI::CS{GPIO::PortH, GPIO::Pin3}),
-
-		initSPIDevice(DRV_BARO_DEVTYPE_MS5611, SPI::CS{GPIO::PortH, GPIO::Pin5}),
-
-		initSPIDevice(SPIDEV_EEPROM(0), SPI::CS{GPIO::PortG, GPIO::Pin6}),
-	}, {GPIO::PortG, GPIO::Pin12}),
-
-	initSPIBus(SPI::Bus::SPI3, {
-		initSPIDevice(DRV_IMU_DEVTYPE_IIM42652, SPI::CS{GPIO::PortF, GPIO::Pin10}, SPI::DRDY{GPIO::PortF, GPIO::Pin3}),
-
-		initSPIDevice(SPIDEV_FLASH(0), SPI::CS{GPIO::PortG, GPIO::Pin7}),
-	}, {GPIO::PortG, GPIO::Pin12}),
-
-	initSPIBus(SPI::Bus::SPI4, {
-        	initSPIDevice(DRV_IMU_DEVTYPE_IIM42652, SPI::CS{GPIO::PortG, GPIO::Pin15}, SPI::DRDY{GPIO::PortA, GPIO::Pin15}),
-
-		initSPIDevice(DRV_BARO_DEVTYPE_MS5611, SPI::CS{GPIO::PortH, GPIO::Pin15}),
-	}, {GPIO::PortG, GPIO::Pin12}),
-
-	initSPIBusExternal(SPI::Bus::SPI5, {
-		initSPIConfigExternal(SPI::CS{GPIO::PortE, GPIO::Pin2}),
-	}),
+#include <px4_platform_common/px4_manifest.h>
+//                                                                     KiB BS    nB
+static const px4_mft_device_t spi3 = {             // FM25V02A on FMUM 32K 512 X 64
+	.bus_type = px4_mft_device_t::SPI,
+	.devid    = SPIDEV_FLASH(0)
 };
 
-static constexpr bool unused = validateSPIConfig(px4_spi_buses);
+static const px4_mft_device_t spi1 = {             // AT25512  on Base 64K 128 X 512
+	.bus_type = px4_mft_device_t::SPI_EEPROM,
+	.devid    = SPIDEV_EEPROM(0)
+};
+
+static const px4_mtd_entry_t fmum_fram = {
+	.device = &spi3,
+	.npart = 2,
+	.partd = {
+		{
+			.type = MTD_PARAMETERS,
+			.path = "/fs/mtd_params",
+			.nblocks = 32
+		},
+		{
+			.type = MTD_WAYPOINTS,
+			.path = "/fs/mtd_waypoints",
+			.nblocks = 32
+		},
+	},
+};
+
+static const px4_mtd_entry_t base_eeprom = {
+	.device = &spi1,
+	.npart = 1,
+	.partd = {
+		{
+			.type = MTD_NET,
+			.path = "/fs/mtd_net",
+			.nblocks = 2 // 256 = 128 * 2
+		}
+	},
+};
+
+static const px4_mtd_manifest_t board_mtd_config = {
+	.nconfigs   = 2,
+	.entries = {
+		&fmum_fram,
+		&base_eeprom,
+	}
+};
+
+static const px4_mft_entry_s mtd_mft = {
+	.type = MTD,
+	.pmft = (void *) &board_mtd_config,
+};
+
+static const px4_mft_s mft = {
+	.nmft = 1,
+	.mfts = {
+		&mtd_mft,
+	}
+};
+
+const px4_mft_s *board_get_manifest(void)
+{
+	return &mft;
+}
