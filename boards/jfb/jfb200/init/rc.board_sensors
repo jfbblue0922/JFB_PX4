@@ -17,8 +17,8 @@ bmp388 -s -b 4 -T 390 start
 
 #Commpass
 # internal compass
-bmm350 -I -R 0 start
-ist8310 -I -R 8 start
+bmm350 -I -R 8 start
+ist8310 -I -R 0 start
 # External compass
 ist8310 -X -b 1 -R 10 start
 
