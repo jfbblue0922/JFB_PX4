@@ -146,12 +146,14 @@
 #define GPIO_PWM_VOLTAGE_SEL_5V_3Vn /* PJ6  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTJ | GPIO_PIN6)
 #define GPIO_IMU_TEMP_CTRL          /* PI12 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTI | GPIO_PIN12)
 #define GPIO_HEATER_CEn             /* PI13 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTI | GPIO_PIN13)
-#define GPIO_nARMED                 /* PF2  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTF | GPIO_PIN2)
 
 #define GPIO_FMU_CAP1               /* PE11 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTE | GPIO_PIN11)
 #define GPIO_FMU_CAP2               /* PI9  */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTI | GPIO_PIN9)
 #define GPIO_SAFETY_SWITCH_IN       /* PG15 */  (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTG | GPIO_PIN15)
 #define GPIO_SD_CARD_IN             /* PC13 */  (GPIO_INPUT | GPIO_PORTC | GPIO_PIN13)
+
+#define GPIO_nARMED_INIT            /* PF2  */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTF | GPIO_PIN2)
+#define GPIO_nARMED                 /* PF2  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTF | GPIO_PIN2)
 
 /* Define True logic Power Control in arch agnostic form */
 #define VDD_5V_PERIPH_EN(on_true)           px4_arch_gpiowrite(GPIO_VDD_5V_PERIPH_CEn, !(on_true))      /* PK1  */
@@ -188,16 +190,22 @@
 #define GPIO_HEATER_OUTPUT          GPIO_IMU_TEMP_CTRL
 #define HEATER_OUTPUT_EN(on_true)   px4_arch_gpiowrite(GPIO_HEATER_OUTPUT, (on_true))
 
+/* nARMED */
+#define BOARD_INDICATE_EXTERNAL_LOCKOUT_STATE(enabled)  px4_arch_configgpio((enabled) ? GPIO_nARMED : GPIO_nARMED_INIT)
+#define BOARD_GET_EXTERNAL_LOCKOUT_STATE()              px4_arch_gpioread(GPIO_nARMED)
+
 /* Tone alarm output */
 #define TONE_ALARM_TIMER        14  /* PF9 TIM14_CH1 */
 #define TONE_ALARM_CHANNEL      1   /* PF9 TIM14_CH1 */
 #define GPIO_TONE_ALARM_IDLE    GPIO_BUZZER_1       /* PF9 */
 #define GPIO_TONE_ALARM         GPIO_TIM14_CH1OUT_2 /* PF9 */
 
+#if 1 // for timer12 channel 1 is PPM...
 /* PWM input driver. timer12 channel 1 */
 #define PWMIN_TIMER             12  /* PH6 TIM12_CH1 */
 #define PWMIN_TIMER_CHANNEL     1   /* PH6 TIM12_CH1 */
 #define GPIO_PWM_IN             GPIO_TIM12_CH1IN_2  /* PH6 */
+#endif
 
 /* USB
  *  OTG FS: PA9  OTG_FS_VBUS VBUS sensing
@@ -207,6 +215,13 @@
 /* High-resolution timer */
 #define HRT_TIMER               5   /* use timer5 for the HRT */
 #define HRT_TIMER_CHANNEL       1   /* use capture/compare channel 1 */
+#if 0 // for HRT_TIMER must be a value between 1 and 11
+#define HRT_TIMER               12  /* use timer12 for the HRT */
+#define HRT_TIMER_CHANNEL       3   /* use capture/compare channel 3 */
+
+#define HRT_PPM_CHANNEL         /* T12C1 */  1  /* use capture/compare channel 1 */
+#define GPIO_PPM_IN             GPIO_TIM12_CH1IN_2  /* PH6 */
+#endif
 
 /* SD card */
 #define SDIO_SLOTNO             0   /* Only one slot */
@@ -281,7 +296,7 @@
 		GPIO_PWM_VOLTAGE_SEL_5V_3Vn,    \
 		GPIO_IMU_TEMP_CTRL,             \
 		GPIO_HEATER_CEn,                \
-		GPIO_nARMED,                    \
+		GPIO_nARMED_INIT,               \
 		GPIO_FMU_CAP1,                  \
 		GPIO_FMU_CAP2,                  \
 		GPIO_SAFETY_SWITCH_IN,          \
