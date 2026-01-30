@@ -90,12 +90,28 @@ ADC::~ADC()
 
 int ADC::init()
 {
+#if 0
 	int ret_init = px4_arch_adc_init(_base_address);
 
 	if (ret_init < 0) {
 		PX4_ERR("arch adc init failed");
 		return ret_init;
 	}
+#else
+	int ret_init = px4_arch_adc_init(STM32_ADC1_BASE);
+
+	if (ret_init < 0) {
+		PX4_ERR("arch adc init failed");
+		return ret_init;
+	}
+
+	ret_init = px4_arch_adc_init(STM32_ADC3_BASE);
+
+	if (ret_init < 0) {
+		PX4_ERR("arch adc init failed");
+		return ret_init;
+	}
+#endif
 
 	// schedule regular updates
 	ScheduleOnInterval(kINTERVAL, kINTERVAL);
@@ -293,7 +309,23 @@ void ADC::update_system_power(hrt_abstime now)
 uint32_t ADC::sample(unsigned channel)
 {
 	perf_begin(_sample_perf);
+#if 0
 	uint32_t result = px4_arch_adc_sample(_base_address, channel);
+#else
+	uint32_t result;
+
+	switch (channel) {
+	case 4:
+	case 8:
+	case 14:
+	case 15:
+		result = px4_arch_adc_sample((uint32_t)STM32_ADC3_BASE, channel);
+		break;
+	default:
+		result = px4_arch_adc_sample((uint32_t)STM32_ADC1_BASE, channel);
+		break;
+	}
+#endif
 
 	if (result == UINT32_MAX) {
 		PX4_ERR("sample timeout");
