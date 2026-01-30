@@ -81,6 +81,10 @@ BMP388::init()
 	if (_chip_id == BMP390_CHIP_ID) {
 		_interface->set_device_type(DRV_BARO_DEVTYPE_BMP390);
 		this->_item_name = "bmp390";
+
+	} else {
+		_interface->set_device_type(DRV_BARO_DEVTYPE_BMP388);
+		this->_item_name = "bmp388";
 	}
 
 	if (_interface->get_reg(BMP3_REV_ID_ADDR, &_chip_rev_id) != OK) {
