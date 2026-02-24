@@ -412,7 +412,8 @@
 #define GPIO_SPI4_MOSI  GPIO_SPI4_MOSI_2    /* PE6  */
 
 #define GPIO_SPI5_SCK   GPIO_SPI5_SCK_1     /* PF7  */
-#define GPIO_SPI5_MISO  GPIO_SPI5_MISO_2    /* PH7  */
+// #define GPIO_SPI5_MISO  GPIO_SPI5_MISO_2    /* PH7  */
+#define GPIO_SPI5_MISO  (GPIO_SPI5_MISO_2 | GPIO_PUPDR_PULLUP)  /* PH7  */
 #define GPIO_SPI5_MOSI  GPIO_SPI5_MOSI_3    /* PJ10 */
 
 /* I2C */
