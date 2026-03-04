@@ -186,6 +186,9 @@
 /* ARMED */
 #define ARMED_EN(on_true)           px4_arch_gpiowrite(GPIO_nARMED, (on_true))
 
+/* PWM Power */
+#define PWM_5V_VOLT_SEL(on_true)    px4_arch_gpiowrite(GPIO_PWM_VOLTAGE_SEL_5V_3Vn, (on_true))
+
 /* HEATER */
 #define GPIO_HEATER_OUTPUT          GPIO_IMU_TEMP_CTRL
 #define HEATER_OUTPUT_EN(on_true)   px4_arch_gpiowrite(GPIO_HEATER_OUTPUT, (on_true))
