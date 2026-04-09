@@ -126,13 +126,16 @@
 #define GPIO_VDD_5V_HIPOWER_CEn     /* PG10 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_SET | GPIO_PORTG | GPIO_PIN10)
 #define GPIO_VDD_3V3_SPEKTRUM_EN    /* PA15 */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTA | GPIO_PIN15)
 
-#define BOARD_NUMBER_BRICKS     2   /* BRICKS信号は3つあるが、ADC変換で測定できるのは、BRICKとBRICK2だけなのため「2」とする。
-                                     * この定義で、電圧と電源のADC変換CHを変換テーブルを定義するため、ADC変換がない場合CHを割り当てられないためである。 */
+#define BOARD_NUMBER_BRICKS     2   /* BRICKS信号は3つあるが、ADC変換で測定できるのは、BRICK1とBRICK2だけである。
+                                     * BRICKS3は、USB用であり、GPIO_VBUS_RESERVEDはADC変換未対応ポートである。
+                                     * そのためこの「BOARD_NUMBER_BRICKS」定義は「2」とする。
+                                     * この定義で、電圧と電源のADC変換CHを変換テーブルを定義するため、ADC変換がない場合CHを割り当てられない。 */
 #define GPIO_VDD_BRICK1_VALIDn      /* PG1 */   (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTG | GPIO_PIN1)
 #define GPIO_VDD_BRICK2_VALIDn      /* PG2 */   (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTG | GPIO_PIN2)
 #define GPIO_VDD_BRICK3_VALIDn      /* PG3 */   (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTG | GPIO_PIN3)
-#define GPIO_VDD_5V_PERIPH_FAULTn   /* PJ15 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTJ | GPIO_PIN15)
-#define GPIO_VDD_5V_HIPOWER_FAULTn  /* PF10 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTF | GPIO_PIN10)
+#define GPIO_VDD_USB_VALIDn         GPIO_VDD_BRICK3_VALIDn
+#define GPIO_VDD_5V_PERIPH_FAULTn   /* PJ15 */  (GPIO_INPUT | GPIO_PULLDOWN |  GPIO_PORTJ | GPIO_PIN15)
+#define GPIO_VDD_5V_HIPOWER_FAULTn  /* PF10 */  (GPIO_INPUT | GPIO_PULLDOWN |  GPIO_PORTF | GPIO_PIN10)
 #define GPIO_VBUS_RESERVED          /* PA10 */  (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTA | GPIO_PIN10)  /* for USB_CONNECTED */
 #define GPIO_5V_HEATER_FAULTn       /* PE15 */  (GPIO_INPUT | GPIO_PULLUP | GPIO_PORTE | GPIO_PIN15)
 
@@ -168,7 +171,7 @@
  * provides the true logic GPIO BOARD_ADC_xxxx macros.
  */
 #define BOARD_ADC_USB_CONNECTED     (px4_arch_gpioread(GPIO_VBUS_RESERVED))             /* PA10 */
-#define BOARD_ADC_USB_VALID         (!px4_arch_gpioread(GPIO_VDD_BRICK3_VALIDn))        /* PG3  */
+#define BOARD_ADC_USB_VALID         (!px4_arch_gpioread(GPIO_VDD_USB_VALIDn))           /* PG3  */
 #define BOARD_ADC_BRICK1_VALID      (!px4_arch_gpioread(GPIO_VDD_BRICK1_VALIDn))        /* PG1  */
 #define BOARD_ADC_BRICK2_VALID      (!px4_arch_gpioread(GPIO_VDD_BRICK2_VALIDn))        /* PG2  */
 #define BOARD_ADC_BRICK3_VALID      BOARD_ADC_USB_VALID                                 /* PG3  */
@@ -207,7 +210,7 @@
 /* PWM input driver. timer12 channel 1 */
 #define PWMIN_TIMER             12  /* PH6 TIM12_CH1 */
 #define PWMIN_TIMER_CHANNEL     1   /* PH6 TIM12_CH1 */
-#define GPIO_PWM_IN             GPIO_TIM12_CH1IN_2  /* PH6 */
+#define GPIO_PWM_IN             (GPIO_TIM12_CH1IN_2 | GPIO_PULLDOWN)    /* PH6 */
 #endif
 
 /* USB
@@ -269,7 +272,8 @@
 		/* Power */                     \
 		GPIO_VDD_BRICK1_VALIDn,         \
 		GPIO_VDD_BRICK2_VALIDn,         \
-		GPIO_VDD_BRICK3_VALIDn,         \
+		/* GPIO_VDD_BRICK3_VALIDn, */   \
+		GPIO_VDD_USB_VALIDn,            \
 		GPIO_VDD_5V_PERIPH_FAULTn,      \
 		GPIO_VDD_5V_HIPOWER_FAULTn,     \
 		GPIO_VBUS_RESERVED,             \
