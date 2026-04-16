@@ -45,6 +45,7 @@ BMP388::print_usage()
 	PRINT_MODULE_USAGE_COMMAND("start");
 	PRINT_MODULE_USAGE_PARAMS_I2C_SPI_DRIVER(true, true);
 	PRINT_MODULE_USAGE_PARAMS_I2C_ADDRESS(0x76);
+	PRINT_MODULE_USAGE_PARAM_STRING('T', "388", "388|390", "Device type", true);
 	PRINT_MODULE_USAGE_DEFAULT_COMMANDS();
 }
 
@@ -88,10 +89,29 @@ I2CSPIDriverBase *BMP388::instantiate(const I2CSPIDriverConfig &config, int runt
 extern "C" int bmp388_main(int argc, char *argv[])
 {
 	using ThisDriver = BMP388;
+	int ch;
 	BusCLIArguments cli{true, true};
 	cli.i2c_address = 0x76;
 	cli.default_i2c_frequency = 100 * 1000;
 	cli.default_spi_frequency = 10 * 1000 * 1000;
+
+	uint16_t dev_type_driver = DRV_BARO_DEVTYPE_BMP388;
+
+	while ((ch = cli.getOpt(argc, argv, "T:")) != EOF) {
+		switch (ch) {
+		case 'T': {
+				int val = atoi(cli.optArg());
+
+				if (val == 388) {
+					dev_type_driver = DRV_BARO_DEVTYPE_BMP388;
+
+				} else if (val == 390) {
+					dev_type_driver = DRV_BARO_DEVTYPE_BMP390;
+				}
+			}
+			break;
+		}
+	}
 
 	const char *verb = cli.parseDefaultArguments(argc, argv);
 
@@ -100,7 +120,7 @@ extern "C" int bmp388_main(int argc, char *argv[])
 		return -1;
 	}
 
-	BusInstanceIterator iterator(MODULE_NAME, cli, DRV_BARO_DEVTYPE_BMP388);
+	BusInstanceIterator iterator(MODULE_NAME, cli, dev_type_driver);
 
 	if (!strcmp(verb, "start")) {
 		return ThisDriver::module_start(cli, iterator);

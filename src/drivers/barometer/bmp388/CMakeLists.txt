@@ -39,6 +39,8 @@ px4_add_module(
 		bmp388_i2c.cpp
 		bmp388.cpp
 		bmp388_main.cpp
+		bmp388.h
 	DEPENDS
+		drivers__device
 		px4_work_queue
 	)

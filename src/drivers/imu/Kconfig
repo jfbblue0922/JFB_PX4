@@ -25,6 +25,7 @@ menu "IMU"
         select DRIVERS_IMU_ST_L3GD20
         select DRIVERS_IMU_ST_LSM303D
         select DRIVERS_IMU_ST_LSM9DS1
+        select DRIVERS_IMU_ST_ASM330
         ---help---
             Enable default set of IMU drivers
     rsource "*/Kconfig"
