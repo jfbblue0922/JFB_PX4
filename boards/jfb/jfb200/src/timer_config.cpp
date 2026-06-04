@@ -34,10 +34,10 @@
 #include <px4_arch/io_timer_hw_description.h>
 
 constexpr io_timers_t io_timers[MAX_IO_TIMERS] = {
-	initIOTimer(Timer::Timer1),
-	initIOTimer(Timer::Timer3),
-	initIOTimer(Timer::Timer4),
-	initIOTimer(Timer::Timer8),
+	initIOTimer(Timer::Timer1, DMA{DMA::Index1}),
+	initIOTimer(Timer::Timer3, DMA{DMA::Index2}),
+	initIOTimer(Timer::Timer4, DMA{DMA::Index1}),
+	initIOTimer(Timer::Timer8, DMA{DMA::Index2}),
 	initIOTimer(Timer::Timer12),
 };
 
