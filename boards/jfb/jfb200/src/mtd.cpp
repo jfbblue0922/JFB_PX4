@@ -56,19 +56,29 @@ static const px4_mtd_entry_t fmum_fram = {
 			.path = "/fs/mtd_params",
 			.nblocks = (32768 / (1 << CONFIG_RAMTRON_EMULATE_SECTOR_SHIFT))
 		}
-	},
+	}
 };
 
 static const px4_mtd_entry_t base_eeprom = {
 	.device = &spi4,
-	.npart = 1,
+	.npart = 3,
 	.partd = {
 		{
 			.type = MTD_NET,
 			.path = "/fs/mtd_net",
 			.nblocks = 2 // 256 = 128 * 2
+		},
+		{
+			.type = MTD_ID,
+			.path = "/fs/mtd_id",
+			.nblocks = 8 // 256 = 32 * 8
+		},
+		{
+			.type = MTD_CALDATA,
+			.path = "/fs/mtd_caldata",
+			.nblocks = 60 // 7680 = 128 * 60
 		}
-	},
+	}
 };
 
 static const px4_mtd_manifest_t board_mtd_config = {
